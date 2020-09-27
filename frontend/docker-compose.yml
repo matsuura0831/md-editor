@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  frontend:
+    image: node
+    volumes:
+      - ".:/workspace"
+    working_dir: "/workspace"
+    ports:
+      - "5500:5500" # for LiveServer Plugin

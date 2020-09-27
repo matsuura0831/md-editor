@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>MD Editor</title>
+    <meta name="description" content="markdown editor on serverless environment">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <!--
+        Base: https://tailwindcomponents.com/component/slack-clone-1
+    -->
+    <div class="font-sans antialiased w-screen h-screen flex overflow-hidden">
+        <!-- Sidebar -->
+        <div class="bg-indigo-darkest text-purple-lighter flex-none w-64 pb-6 overflow-y-auto" id="sidebar">
+            <div class="text-white mb-2 mt-3 px-4 flex justify-between">
+                <div class="flex-auto">
+                    <h1 class="font-semibold text-xl leading-tight mb-1 truncate">MD</h1>
+                </div>
+                <!--
+                <div>
+                    <svg class="h-6 w-6 fill-current text-white opacity-25" viewBox="0 0 20 20">
+                        <path d="M14 8a4 4 0 1 0-8 0v7h8V8zM8.027 2.332A6.003 6.003 0 0 0 4 8v6l-3 2v1h18v-1l-3-2V8a6.003 6.003 0 0 0-4.027-5.668 2 2 0 1 0-3.945 0zM12 18a2 2 0 1 1-4 0h4z" fill-rule="evenodd" />
+                    </svg>
+                </div>
+                -->
+            </div>
+
+            <div class="mb-4">
+                <div class="px-4 mb-2 text-white flex justify-between items-center">
+                    <div class="opacity-75">
+                        <span class="mr-1"><i class="fas fa-book"></i></span>
+                        Notebook
+                    </div>
+                    <div>
+                        <svg class="fill-current h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
+                        </svg>
+                    </div>
+                </div>
+                <ul class="py-1 px-6 text-white">
+                    <li class="bg-teal-700 p-1">general</li>
+                    <li class="p-1">private</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <div class="px-4 mb-2 text-white flex justify-between items-center">
+                    <div class="opacity-75">
+                        <span class="mr-1"><i class="fas fa-tag"></i></span>
+                        Tag
+                    </div>
+                    <div>
+                        <svg class="fill-current h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
+                        </svg>
+                    </div>
+                </div>
+                <ul class="py-1 px-6 text-white">
+                    <li class="bg-teal-700 p-1"># Server</li>
+                    <li class="p-1"># Coffee</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="relative flex-1 flex pt-8" id="main" style="width: 0px">
+            <div class="absolute top-0 left-0 w-full h-8 bg-indigo-darker text-white flex items-center justify-center">
+                <div>
+                    Toggle:
+                    <button id="toggle-sidebar" class="pl-1 m-1"><i class="fas fa-cogs"></i></button>
+                    <button id="toggle-editor" class="pl-1 m-1"><i class="fas fa-edit"></i></button>
+                    <button id="toggle-viewer" class="nav-toggle-on pl-1 m-1"><i class="fas fa-book-open"></i></button>
+                </div>
+                <div class="ml-2">
+                    Tools:
+                    <button id="invoke-drawio" class="pl-1 m-1"><i class="fas fa-draw-polygon"></i></button>
+                    <button id="invoke-now" class="pl-1 m-1"><i class="far fa-clock"></i></button>
+                </div>
+            </div>
+
+            <div class="flex-1" id="editor">:::drawio
+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSIyMDNweCIgaGVpZ2h0PSI2NHB4IiB2aWV3Qm94PSItMC41IC0wLjUgMjAzIDY0IiBjb250ZW50PSImbHQ7bXhmaWxlIGhvc3Q9JnF1b3Q7ZW1iZWQuZGlhZ3JhbXMubmV0JnF1b3Q7IG1vZGlmaWVkPSZxdW90OzIwMjAtMDktMjdUMDg6NTM6MDcuNjk2WiZxdW90OyBhZ2VudD0mcXVvdDs1LjAgKFgxMTsgTGludXggeDg2XzY0KSBBcHBsZVdlYktpdC81MzcuMzYgKEtIVE1MLCBsaWtlIEdlY2tvKSBDaHJvbWUvNzkuMC4zOTQ1LjExNyBTYWZhcmkvNTM3LjM2JnF1b3Q7IGV0YWc9JnF1b3Q7YXlZazlVUnBxNE41a2h6X3p6c1QmcXVvdDsgdmVyc2lvbj0mcXVvdDsxMy43LjUmcXVvdDsgdHlwZT0mcXVvdDtlbWJlZCZxdW90OyZndDsmbHQ7ZGlhZ3JhbSBpZD0mcXVvdDsxNDA1OGQ5OS1kYjU4LWU5ZjUtM2FiYS0zOTk4NzljMTNlMjUmcXVvdDsgbmFtZT0mcXVvdDtQYWdlLTEmcXVvdDsmZ3Q7alpNOWM0TXdESVovRFR2Z0swM1drSytsVTRiT2lsR3dMd1p4eGdUU1gxOERJc0RsZWxjV1c0OGt5MzRsQXBFVzNjbENwYjRvUXhQRVlkWUZZaC9FY1JSdHQzN3B5WE1rbXlRZVFXNTF4a0V6dU9nZlpCZ3liWFNHOVNyUUVSbW5xeldVVkpZbzNZcUJ0ZFN1dzI1azFsVXJ5UEVOWENTWWQvcXRNNmY0RlhFeTh6UHFYRTJWbzRRZmZBVjV6eTAxSmRjTFluRWJ2dEZkd0hRV1A3UldrRkc3UU9JUWlOUVN1WEZYZENtYVh0dEp0akh2K0lmM2RXK0xwZnRQZ2dnL3g1UUhtSVlmdjZmbTZvWHc2aG90NzM1VmFKR3Y2NTZUUkszU0RpOFZ5TjV1L1JnRVlxZGNZYndWK2UyTlNuZUVRcHQrQXM1b0h1aTBCSFp3dzZQTlpQT3hmZUlnSG1ac2daVWMvQkZ5Y0VxRzdIQUhFUTZmNTJTaDdEdTZ5dzNVTmVlK2E4SHlQTkE2N0JhSXRUa2hGZWpzMDRldzE1Y1lVM2lPdDJ5MjgxREVJVE8xR0lpRUdmQWM1cStUNTE3NERiZGpNdWUyRDc3RnZ5VU92dz09Jmx0Oy9kaWFncmFtJmd0OyZsdDsvbXhmaWxlJmd0OyIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1KTsiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSIgaWQ9Im14LWdyYWRpZW50LWZmY2QyOC0xLWZmYTUwMC0xLXMtMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I0ZGQ0QyOCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I0ZGQTUwMCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIiBpZD0ibXgtZ3JhZGllbnQtZmZmZmZmLTAuOS1mZmZmZmYtMC4xLXMtMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmZmZmZjtzdG9wLW9wYWNpdHk6MC45Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmZmZmO3N0b3Atb3BhY2l0eTowLjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Zz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjYwIiByeD0iMzAiIHJ5PSIzMCIgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwMDAwIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyLDMpIiBvcGFjaXR5PSIwLjI1Ii8+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSI2MCIgcng9IjMwIiByeT0iMzAiIGZpbGw9InVybCgjbXgtZ3JhZGllbnQtZmZjZDI4LTEtZmZhNTAwLTEtcy0wKSIgc3Ryb2tlPSIjZDc5YjAwIiBwb2ludGVyLWV2ZW50cz0iYWxsIi8+PHBhdGggZD0iTSAzMS41IC0xIFEgLTEgLTEgLTEgMzEuNSBMIC0xIDI0IFEgMTAwIDQyIDIwMSAyNCBMIDIwMSAzMS41IFEgMjAxIC0xIDE2OC41IC0xIFoiIGZpbGw9InVybCgjbXgtZ3JhZGllbnQtZmZmZmZmLTAuOS1mZmZmZmYtMC4xLXMtMCkiIHN0cm9rZT0ibm9uZSIgcG9pbnRlci1ldmVudHM9ImFsbCIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0wLjUgLTAuNSkiPjxzd2l0Y2g+PGZvcmVpZ25PYmplY3Qgc3R5bGU9Im92ZXJmbG93OiB2aXNpYmxlOyB0ZXh0LWFsaWduOiBsZWZ0OyIgcG9pbnRlci1ldmVudHM9Im5vbmUiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHJlcXVpcmVkRmVhdHVyZXM9Imh0dHA6Ly93d3cudzMub3JnL1RSL1NWRzExL2ZlYXR1cmUjRXh0ZW5zaWJpbGl0eSI+PGRpdiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCIgc3R5bGU9ImRpc3BsYXk6IGZsZXg7IGFsaWduLWl0ZW1zOiB1bnNhZmUgY2VudGVyOyBqdXN0aWZ5LWNvbnRlbnQ6IHVuc2FmZSBjZW50ZXI7IHdpZHRoOiAxOThweDsgaGVpZ2h0OiAxcHg7IHBhZGRpbmctdG9wOiAzMHB4OyBtYXJnaW4tbGVmdDogMXB4OyI+PGRpdiBzdHlsZT0iYm94LXNpemluZzogYm9yZGVyLWJveDsgZm9udC1zaXplOiAwOyB0ZXh0LWFsaWduOiBjZW50ZXI7ICI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyBmb250LXNpemU6IDE4cHg7IGZvbnQtZmFtaWx5OiBIZWx2ZXRpY2E7IGNvbG9yOiAjMDAwMDAwOyBsaW5lLWhlaWdodDogMS4yOyBwb2ludGVyLWV2ZW50czogYWxsOyBmb250LXdlaWdodDogYm9sZDsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgd29yZC13cmFwOiBub3JtYWw7ICI+RG91YmxlIGNsaWNrIGhlcmU8L2Rpdj48L2Rpdj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PHRleHQgeD0iMTAwIiB5PSIzNSIgZmlsbD0iIzAwMDAwMCIgZm9udC1mYW1pbHk9IkhlbHZldGljYSIgZm9udC1zaXplPSIxOHB4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iYm9sZCI+RG91YmxlIGNsaWNrIGhlcmU8L3RleHQ+PC9zd2l0Y2g+PC9nPjwvZz48c3dpdGNoPjxnIHJlcXVpcmVkRmVhdHVyZXM9Imh0dHA6Ly93d3cudzMub3JnL1RSL1NWRzExL2ZlYXR1cmUjRXh0ZW5zaWJpbGl0eSIvPjxhIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAsLTUpIiB4bGluazpocmVmPSJodHRwczovL2Rlc2suZHJhdy5pby9zdXBwb3J0L3NvbHV0aW9ucy9hcnRpY2xlcy8xNjAwMDA0MjQ4NyIgdGFyZ2V0PSJfYmxhbmsiPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTBweCIgeD0iNTAlIiB5PSIxMDAlIj5WaWV3ZXIgZG9lcyBub3Qgc3VwcG9ydCBmdWxsIFNWRyAxLjE8L3RleHQ+PC9hPjwvc3dpdGNoPjwvc3ZnPg==
+:::</div>
+
+            <div class="flex-1 bg-gray-300 overflow-auto p-4" id="viewer">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
