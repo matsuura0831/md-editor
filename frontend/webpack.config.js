@@ -1,5 +1,5 @@
 const src = `${__dirname}/src`
-const dst = `${__dirname}/dist`
+const dst = `${__dirname}/build`
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -8,6 +8,7 @@ module.exports = {
     mode: 'development',
     //mode: 'production',
 
+    target: 'electron-main',
     context: src,
     entry: './index.js',
     output: {

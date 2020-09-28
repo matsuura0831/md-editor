@@ -52,6 +52,14 @@ const editor = ace.edit('editor',  {
 });
 editor.setKeyboardHandler("ace/keyboard/vim");
 
+// sample
+ace.config.loadModule("ace/keyboard/vim", function(m) {
+    var VimApi = m.CodeMirror.Vim
+    VimApi.defineEx("write", "w", function(cm, input) {
+        console.log(cm, input);
+    })
+})
+
 const tg_sidebar = document.querySelector('#toggle-sidebar');
 const tg_editor = document.querySelector('#toggle-editor');
 const tg_viewer = document.querySelector('#toggle-viewer');
@@ -83,3 +91,65 @@ bt_time.addEventListener('click', () => {
     const t = `${dayjs().format()}\n`;
     editor.session.insert(editor.getCursorPosition(), t);
 });
+
+
+// sample
+import fs from 'fs';
+import { remote } from 'electron';
+const { BrowserWindow, dialog, app } = remote;
+
+const BASE_PATH = app.getAppPath();
+
+function readFile(path) {
+    fs.readFile(path, (error, data) => {
+        if (error != null) {
+            alert("file open error.");
+            return;
+        }
+        editor.setValue(data.toString());
+        editor.clearSelection();
+    })
+}
+
+
+const win = BrowserWindow.getFocusedWindow();
+dialog.showOpenDialog(
+    win,
+    {
+        defaultPath: BASE_PATH,
+        properties: ['openFile'],
+        filters: [
+            {
+                name: 'Markdown',
+                extensions: ['md', 'txt']
+            }
+        ]
+    },
+).then(result => {
+    if (result.filePaths.length > 0) {
+        readFile(result.filePaths[0]);
+    }
+});
+
+document.addEventListener('drop', (event) => { 
+    event.preventDefault(); 
+    event.stopPropagation(); 
+  
+    for (const f of event.dataTransfer.files) { 
+        // Using the path attribute to get absolute file path 
+        console.log('File Path of dragged files: ', f.path) 
+      } 
+}); 
+  
+document.addEventListener('dragover', (e) => { 
+    e.preventDefault(); 
+    e.stopPropagation(); 
+  }); 
+  
+document.addEventListener('dragenter', (event) => { 
+    console.log('File is in the Drop Space'); 
+}); 
+  
+document.addEventListener('dragleave', (event) => { 
+    console.log('File has left the Drop Space'); 
+}); 

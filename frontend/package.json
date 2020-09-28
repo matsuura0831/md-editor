@@ -1,15 +1,29 @@
 {
-  "name": "frontend",
+  "name": "md_editor",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "webpack",
-    "watch": "webpack --watch",
-    "pack": "webpack -p",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "markdown editor for me",
+  "main": "app/index.js",
+  "homepage": "https://github.com/matsuura0831",
+  "author": {
+    "name": "Nobuhiko MATSUURA",
+    "email": "matsuura0831@gmail.com"
   },
-  "author": "",
+  "build": {
+    "appId": "com.besolab.md.editor"
+  },
+  "scripts": {
+    "auto": "run-p electron webpack:watch",
+    "start": "run-s webpack:clean webpack:build electron",
+    "build": "run-s webpack:build electron:build:*",
+    "webpack:build": "webpack",
+    "webpack:pack": "webpack -p",
+    "webpack:watch": "webpack --watch",
+    "webpack:clean": "rm -rf ./build/",
+    "electron": "electron .",
+    "electron:clean": "rm -rf ./dist",
+    "electron:build:linux": "electron-build --linux deb",
+    "electron:build:win": "electron-build --win"
+  },
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -18,10 +32,13 @@
     "@fullhuman/postcss-purgecss": "^3.0.0",
     "babel-loader": "^8.1.0",
     "css-loader": "^4.3.0",
+    "electron": "^10.1.2",
+    "electron-builder": "^22.8.1",
     "eslint": "^7.9.0",
     "eslint-loader": "^4.0.2",
     "html-webpack-plugin": "^4.5.0",
     "mini-css-extract-plugin": "^0.11.2",
+    "npm-run-all": "^4.1.5",
     "postcss-loader": "^4.0.2",
     "style-loader": "^1.2.1",
     "tailwindcss": "^1.8.10",
