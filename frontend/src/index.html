@@ -17,7 +17,7 @@
     -->
     <div class="font-sans antialiased w-screen h-screen flex overflow-hidden">
         <!-- Sidebar -->
-        <div class="bg-indigo-darkest text-purple-lighter flex-none w-64 pb-6 overflow-y-auto" id="sidebar">
+        <div class="bg-indigo-darkest text-purple-lighter flex-none w-64 pb-6 overflow-y-auto" id="nav-notebook">
             <div class="text-white mb-2 mt-3 px-4 flex justify-between">
                 <div class="flex-auto">
                     <h1 class="font-semibold text-xl leading-tight mb-1 truncate">MD</h1>
@@ -68,18 +68,33 @@
             </div>
         </div>
 
+        <div class="bg-indigo-800 text-purple-lighter flex-none w-64 pb-6 overflow-y-auto" id="nav-page">
+            <div class="mb-4">
+                <div class="px-4 mb-2 text-white flex justify-between items-center">
+                    <div class="opacity-75">
+                        Pages
+                    </div>
+                </div>
+                <ul class="py-1 px-6 text-white">
+                    <li class="p-1"><span class="mr-1"><i class="far fa-file"></i></span> マイページ</li>
+                </ul>
+            </div>
+
+        </div>
+
         <div class="relative flex-1 flex pt-8" id="main" style="width: 0px">
             <div class="absolute top-0 left-0 w-full h-8 bg-indigo-darker text-white flex items-center justify-center">
                 <div>
                     Toggle:
-                    <button id="toggle-sidebar" class="pl-1 m-1"><i class="fas fa-cogs"></i></button>
-                    <button id="toggle-editor" class="pl-1 m-1"><i class="fas fa-edit"></i></button>
-                    <button id="toggle-viewer" class="nav-toggle-on pl-1 m-1"><i class="fas fa-book-open"></i></button>
+                    <button id="toggle-notebook" class="ml-1 w-6 h-6"><i class="fas fa-book"></i></button>
+                    <button id="toggle-page" class="ml-1 w-6 h-6"><i class="fas fa-file-alt"></i></button>
+                    <button id="toggle-editor" class="ml-1 w-6 h-6"><i class="fas fa-edit"></i></button>
+                    <button id="toggle-viewer" class="ml-1 w-6 h-6"><i class="fas fa-book-open"></i></button>
                 </div>
-                <div class="ml-2">
+                <div class="ml-4">
                     Tools:
-                    <button id="invoke-drawio" class="pl-1 m-1"><i class="fas fa-draw-polygon"></i></button>
-                    <button id="invoke-now" class="pl-1 m-1"><i class="far fa-clock"></i></button>
+                    <button id="invoke-drawio" class="ml-1 w-6 h-6"><i class="fas fa-draw-polygon"></i></button>
+                    <button id="invoke-now" class="ml-1 w-6 h-6"><i class="far fa-clock"></i></button>
                 </div>
             </div>
 

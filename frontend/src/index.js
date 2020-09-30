@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
 dayjs.locale('ja');
 
-import { enable_viewer, enable_drawio} from './js/ace-util';
+import { enable_viewer, enable_drawio} from './js/util-ace';
 import './base.css'
 
 const PLANTUML_SERVER = 'http://www.plantuml.com/plantuml'
@@ -39,7 +39,8 @@ const md = require('markdown-it')({
     .use(require('./js/markdown-it-message'))
     .use(require('./js/markdown-it-inject-line-no'));
 
-const sidebar = document.querySelector('#sidebar');
+const nav_notebook = document.querySelector('#nav-notebook');
+const nav_page = document.querySelector('#nav-page');
 const viewer = document.querySelector('#viewer');
 const _editor = document.querySelector('#editor');
 
@@ -60,12 +61,14 @@ ace.config.loadModule("ace/keyboard/vim", function(m) {
     })
 })
 
-const tg_sidebar = document.querySelector('#toggle-sidebar');
+const tg_notebook = document.querySelector('#toggle-notebook');
+const tg_page = document.querySelector('#toggle-page');
 const tg_editor = document.querySelector('#toggle-editor');
 const tg_viewer = document.querySelector('#toggle-viewer');
 
 const mapping = [
-    [tg_sidebar, sidebar],
+    [tg_notebook, nav_notebook],
+    [tg_page, nav_page],
     [tg_editor, _editor],
     [tg_viewer, viewer],
 ];
@@ -93,6 +96,7 @@ bt_time.addEventListener('click', () => {
 });
 
 
+/*
 // sample
 import fs from 'fs';
 import { remote } from 'electron';
@@ -110,7 +114,6 @@ function readFile(path) {
         editor.clearSelection();
     })
 }
-
 
 const win = BrowserWindow.getFocusedWindow();
 dialog.showOpenDialog(
@@ -153,3 +156,4 @@ document.addEventListener('dragenter', (event) => {
 document.addEventListener('dragleave', (event) => { 
     console.log('File has left the Drop Space'); 
 }); 
+*/
