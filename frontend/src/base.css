@@ -217,4 +217,14 @@ iframe {
     @apply border-0 fixed top-0 left-0 right-0 bottom-0 w-full h-full;
 }
 
+.highlight-notebook {
+    @apply bg-teal-700;
+}
+.highlight-tag {
+    @apply bg-teal-700;
+}
+.highlight-page {
+    @apply bg-teal-700;
+}
+
 @tailwind utilities;
