@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-indigo-darkest text-purple-lighter flex-none w-64 pb-6 overflow-y-auto" id="nav-notebook">
-        <div class="text-white mb-2 mt-3 px-4 flex justify-between">
+    <div class="flex-none w-64 pb-6 overflow-y-auto" id="nav-notebook" :class="{'hidden': !isShowNotebook}">
+        <div class="header mb-2 mt-3 px-4 flex justify-between">
             <div class="flex-auto">
                 <h1 class="font-semibold text-xl leading-tight mb-1 truncate">MD</h1>
             </div>
@@ -14,39 +14,110 @@
         </div>
 
         <div class="mb-4">
-            <div class="px-4 mb-2 text-white flex justify-between items-center">
-                <div class="opacity-75">
+            <div class="px-4 mb-2 notebook-header flex justify-between items-center">
+                <div>
                     <span class="mr-1"><i class="fas fa-book"></i></span>
                     Notebook
                 </div>
-                <div>
+                <div class="notebook-add">
                     <svg class="fill-current h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                         <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
                     </svg>
                 </div>
             </div>
-            <ul id="list-notebook" class="py-1 px-6 text-white">
-                <li class="highlight-notebook p-1">general</li>
-                <li class="p-1">private</li>
+
+            <ul id="list-notebook" class="notebook-list py-1 px-6">
+                <li class="py-2 px-4 rounded-lg"
+                    :class="{'active': isOwnNotebook(n)}"
+                    v-for="n in notebooks" :key="n.id" @click="changeNotebook(n)">{{ n }}</li>
             </ul>
         </div>
 
         <div class="mb-4">
-            <div class="px-4 mb-2 text-white flex justify-between items-center">
-                <div class="opacity-75">
+            <div class="px-4 mb-2 tag-header flex justify-between items-center">
+                <div>
                     <span class="mr-1"><i class="fas fa-tag"></i></span>
                     Tag
                 </div>
-                <div>
+                <div class="tag-add">
                     <svg class="fill-current h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                         <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
                     </svg>
                 </div>
             </div>
-            <ul id="list-tag" class="py-1 px-6 text-white">
-                <li class="highlight-tag p-1"># Server</li>
-                <li class="p-1"># Coffee</li>
+            <ul id="list-tag" class="tag-list py-1 px-6 text-white">
+                <li class="p-1 py-2 px-4 rounded-lg"
+                    :class="{'active': isOwnTag(t)}"
+                    v-for="t in tags" :key="t.id" @click="changeTag(t)"># {{ t }}</li>
             </ul>
         </div>
     </div>
 </template>
+
+
+<script>
+//import { db_find } from '@/js/util-db';
+
+export default {
+    computed: {
+        notebooks() {
+            return this.$store.state.notebooks;
+        },
+        tags() {
+            return this.$store.state.tags;
+        },
+        notebook() {
+            return this.$store.state.notebook;
+        },
+        tag() {
+            return this.$store.state.tag;
+        },
+        isShowNotebook() {
+            return this.$store.state.isShowNotebook;
+        },
+    },
+    watch: {
+        notebook: function() {
+            this.resetHighlight();
+
+            /*
+            const query = { notebook: this.notebook };
+            db_find('markdown', query, {}, {create_at: -1}).then(docs => {
+                this.$store.commit('setFiles', docs);
+            });
+            */
+        },
+        tag: function() {
+            this.resetHighlight();
+
+            /*
+            const query = { tags: { $elemMatch: this.tag }};
+            db_find('markdown', query, {}, {create_at: -1}).then(docs => {
+                this.$store.commit('setFiles', docs);
+            });
+            */
+        },
+    },
+    methods: {
+        resetHighlight: function() {
+            ['#list-tag li', '#list-notebook li'].forEach(q => {
+                [...document.querySelectorAll(q)].forEach(e => {
+                    e.classList.remove('active');
+                });
+            })
+        },
+        isOwnNotebook: function(v) {
+            return v == this.notebook;
+        },
+        isOwnTag: function(v) {
+            return v == this.tag;
+        },
+        changeNotebook: function(v) {
+            this.$store.commit('changeNotebook', v);
+        },
+        changeTag: function(v) {
+            this.$store.commit('changeTag', v);
+        },
+    },
+}
+</script>

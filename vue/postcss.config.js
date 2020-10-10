@@ -1,5 +1,5 @@
 const src = `${__dirname}/src`
-const dst = `${__dirname}/dist`
+//const dst = `${__dirname}/dist`
 
 const purgecss = require("@fullhuman/postcss-purgecss")({
     content: [`${src}/**/*.html`, `${src}/**/*.vue`],

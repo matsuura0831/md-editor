@@ -1,32 +1,77 @@
 @tailwind base;
 @tailwind components;
 
-.bg-indigo-darkest {
-    @apply bg-indigo-900
-}
-.bg-indigo-darker {
-    @apply bg-indigo-700
-}
-.bg-indigo-lighter {
-    @apply bg-indigo-200
-}
-
-.text-indigo-darkest {
-    @apply text-indigo-900
-}
-.text-indigo-darker {
-    @apply text-indigo-700
-}
-.text-indigo-lighter {
-    @apply text-indigo-200
-}
-
-.text-purple-lighter{
-    @apply text-purple-200
-}
-
 .nav-toggle-off {
-    @apply bg-gray-400;
+    @apply bg-gray-400 text-white;
+}
+
+#nav-notebook {
+    @apply bg-gray-800;
+
+    .header { @apply text-white }
+    .notebook {
+        &-header { @apply text-white; }
+        &-list {
+            li {
+                @apply text-gray-400;
+
+                &:hover {
+                    @apply bg-gray-700 text-yellow-600;
+                }
+
+                &.active {
+                    @apply bg-teal-700;
+                }
+            }
+        }
+    }
+
+    .tag {
+        &-header { @apply text-white; }
+        &-list {
+            li {
+                @apply text-gray-400;
+
+                &:hover {
+                    @apply bg-gray-700 text-yellow-600;
+                }
+
+                &.active {
+                    @apply bg-teal-700;
+                }
+            }
+        }
+    }
+}
+
+#nav-page {
+    @apply bg-gray-700;
+
+    .page {
+        &-header { @apply text-white }
+        &-list {
+            @apply text-white;
+
+            li {
+                &:hover {
+                    @apply bg-gray-800;
+                }
+                
+                &.active {
+                    @apply bg-teal-700;
+                }
+                &.highlight {
+                    @apply bg-yellow-600;
+                }
+            }
+        }
+    }
+}
+
+#main {
+    .header {
+        @apply bg-gray-700 text-white;
+    }
 }
 
 #viewer {
@@ -217,13 +262,4 @@ iframe {
     @apply border-0 fixed top-0 left-0 right-0 bottom-0 w-full h-full;
 }
 
-.highlight-notebook {
-    @apply bg-teal-700;
-}
-.highlight-tag {
-    @apply bg-teal-700;
-}
-.highlight-page {
-    @apply bg-teal-700;
-}
 @tailwind utilities;
