@@ -40,9 +40,11 @@ const readFileRecursively = async(dir, filter, files=[]) => {
 };
 
 const readFile = fsPromises.readFile;
+const writeFile = fsPromises.writeFile;
 
 export {
     DIR_HOME, DIR_WORKDIR, DIR_NOTEBOOK,
     readFileRecursively,
     readFile,
+    writeFile,
 };

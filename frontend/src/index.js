@@ -14,13 +14,15 @@ dayjs.locale('ja');
 
 import frontmatter from '@github-docs/frontmatter';
 
-import { DIR_NOTEBOOK, DIR_WORKDIR, readFileRecursively, readFile } from './js/util-file';
+import { DIR_NOTEBOOK, DIR_WORKDIR, readFileRecursively, readFile, writeFile } from './js/util-file';
 import { db_init, db_insert, db_update, db_find } from './js/util-db';
 import { enable_viewer, enable_drawio} from './js/util-ace';
 import './base.css'
 
 const PLANTUML_SERVER = 'http://www.plantuml.com/plantuml'
 const DIAGRAMS_SERVER = 'https://embed.diagrams.net/?embed=1&ui=min&spin=1&proto=json&configure=1';
+
+let CRNT_FILE = undefined;
 
 /*
     マークダウンパーサの準備
@@ -69,6 +71,9 @@ ace.config.loadModule("ace/keyboard/vim", function(m) {
     var VimApi = m.CodeMirror.Vim
     VimApi.defineEx("write", "w", function(cm, input) {
         console.log(cm, input);
+
+        writeFile(CRNT_FILE, editor.getValue());
+        console.log(`Save ${CRNT_FILE}`);
     })
 })
 
@@ -156,8 +161,8 @@ function update_pages(docs) {
             const fp = this.getAttribute('data-path');
             const data = await readFile(fp, 'utf-8');
 
-            console.log(fp, data);
-            editor.setValue(data, 1);
+            editor.session.setValue(data, 1);
+            CRNT_FILE = fp;
         })
     });
 }
