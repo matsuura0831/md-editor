@@ -13,6 +13,9 @@ import { db_init, db_find, db_remove } from '@/js/util-db';
 
 import Editor from './components/Editor.vue';
 
+import tutorial from "raw-loader!@/assets/md/tutorial.md";
+import snippet from "raw-loader!@/assets/md/snippet.md";
+
 export default {
     name: 'App',
         components: {
@@ -40,11 +43,29 @@ export default {
         }
     },
     created() {
-        [variables.DIR_HOME, variables.DIR_WORKDIR, variables.DIR_NOTEBOOK].forEach(d => {
-            if(!fs.existsSync(d)) fs.mkdirSync(d);
-        })
+        const created = [variables.DIR_HOME, variables.DIR_NOTEBOOK].map(d => {
+            if(!fs.existsSync(d)) {
+                fs.mkdirSync(d);
+                return true;
+            }
+            return false;
+        });
+        if(created[1]) {
+            const [fp_gen, fp_sni] = ['general', 'snippet'].map(e => {
+                const d = path.join(variables.DIR_NOTEBOOK, e);
+                if(!fs.existsSync(d)) fs.mkdirSync(d);
+                return path.join(d, 'default.md');
+            });
 
-        db_init('markdown', [variables.DIR_WORKDIR, 'user.neodb']);
+            (async ()=> {
+                await Promise.all([[fp_gen, tutorial], [fp_sni, snippet]].map(e => {
+                    const [f, c] = e;
+                    return fsPromises.writeFile(f, c);
+                }))
+            })();
+        }
+
+        db_init('markdown', 'user.neodb');
 
         this.readMarkdowns(variables.DIR_NOTEBOOK).then((files) => {
             this.update_markdown(files);

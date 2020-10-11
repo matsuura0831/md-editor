@@ -7,7 +7,6 @@
     "name": "Nobuhiko MATSUURA",
     "email": "matsuura0831@gmail.com"
   },
-
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -53,6 +52,7 @@
     "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^7.0.0-0",
+    "raw-loader": "^4.0.2",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.4"
