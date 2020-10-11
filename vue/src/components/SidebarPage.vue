@@ -93,7 +93,11 @@ export default {
                 this.$store.commit('setFiles', docs);
             });
         },
-        pageAdd: function() {
+        pageAdd: async function() {
+            const options = (await db_find('markdown', { notebook: 'snippet' })).map(d => {
+                return `<option>${d.file}</option>`;
+            }).join("\n");
+
             this.vex.dialog.confirm({
                 message: "ファイルを作成します",
                 input: `
@@ -108,7 +112,7 @@ export default {
                     <div class="vex-custom-input-wrapper">
                         <select name="snippet">
                             <option selected></option>
-                            <option>meeting.md</option>
+                            ${options}
                         </select>
                     </div>
                 </div>
