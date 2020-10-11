@@ -1,5 +1,10 @@
+/*! purgecss start ignore */
 @tailwind base;
+/*! purgecss end ignore */
+
 @tailwind components;
+
+/*! purgecss start ignore */
 
 .nav-toggle-off {
     @apply bg-gray-400 text-white;
@@ -327,5 +332,7 @@
 iframe {
     @apply border-0 fixed top-0 left-0 right-0 bottom-0 w-full h-full;
 }
+/*! purgecss end ignore */
+
 
 @tailwind utilities;
