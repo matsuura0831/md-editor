@@ -21,7 +21,7 @@
 
         <div class="flex-1" id="editor"></div>
 
-        <div class="flex-1 flex flex-col bg-gray-300 overflow-auto" :class="{'hidden': !isShowViewer}">
+        <div class="flex-1 flex flex-col bg-gray-300 break-words overflow-auto" :class="{'hidden': !isShowViewer}">
             <div class="flex-none p-4">
                 <div class="text-3xl leading-9 font-extrabold text-gray-900 tracking-tight">{{ fm_title }}</div>
                 <div class="text-base leading-6 font-medium text-gray-500 pl-1">{{ fm_create_at}}</div>
@@ -56,6 +56,7 @@ const md = require('markdown-it')({
         breaks: true,
         html: true,
         xhtmlOut: true,
+        typographer: true,
     }) 
     .use(require('markdown-it-plantuml'), {
         server: variables.PLANTUML_SERVER,
@@ -68,6 +69,7 @@ const md = require('markdown-it')({
     .use(require('markdown-it-footnote'))
     .use(require('markdown-it-emoji'))
     // load custom plugins
+    .use(require('@/js/plugins/markdown-it-target-blank'))
     .use(require('@/js/plugins/markdown-it-drawio'))
     .use(require('@/js/plugins/markdown-it-highlight'))
     .use(require('@/js/plugins/markdown-it-message'))
@@ -78,9 +80,9 @@ let editor = undefined;
 export default {
     data() {
         return {
-            frontmatter_title: 'TestTitle',
-            frontmatter_tags: ['photografy', 'coffee'],
-            frontmatter_create_at: '2019-01-00 12:33',
+            frontmatter_title: '',
+            frontmatter_tags: [],
+            frontmatter_create_at: '',
         }
     },
     mounted: function() {
@@ -107,7 +109,7 @@ export default {
         enableViewer(editor, document.querySelector('#viewer'), (v) => {
             const { data, content } = frontmatter(v);
 
-            ['title', 'create_at', 'tag'].forEach(t => {
+            ['title', 'create_at', 'tags'].forEach(t => {
                 self[`fm_${t}`] = data[t]
 
             });
@@ -160,7 +162,16 @@ export default {
                 document.querySelector('#editor').classList.add('hidden');
             }
             editor.resize();
-        }
+        },
+        isShowNotebook: function() {
+            editor.resize();
+        },
+        isShowPage: function() {
+            editor.resize();
+        },
+        isShowViewer: function() {
+            editor.resize();
+        },
     },
     methods: {
         saveFile: function() {
