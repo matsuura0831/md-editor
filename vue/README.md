@@ -20,5 +20,11 @@ npm run build
 npm run lint
 ```
 
+### create package
+
+```
+npm run electron:build -- --linux deb --win portable
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

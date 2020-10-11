@@ -1,14 +1,7 @@
 const src = `${__dirname}/src`
 
 const purgecss = require("@fullhuman/postcss-purgecss")({
-    content: [`${src}/**/*.html`, `${src}/**/*.vue`],
-    /*
-    defaultExtractor: (content) => {
-        const contentWithoutStyleBlocks = content.replace(/<style[^]+?<\/style>/gi, '')
-        return contentWithoutStyleBlocks.match(/[A-Za-z0-9-_/:]*[A-Za-z0-9-_/]+/g) || []
-    },
-    defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
-    */
+    content: [`${src}/**/*.html`, `${src}/**/*.vue`, `${src}/**/*.js`],
     defaultExtractor: content => {
         const broadMatches = content.match(/[^<>"'`\s]*[^<>"'`\s:]/g) || []
         const innerMatches = content.match(/[^<>"'`\s.()]*[^<>"'`\s.():]/g) || []
@@ -18,11 +11,6 @@ const purgecss = require("@fullhuman/postcss-purgecss")({
         /^vex.*/,
         /^hljs.*/,
         /^ace.*/,
-        /*
-        /-(leave|enter|appear)(|-(to|from|active))$/,
-        /^(?!cursor-move).+-move$/,
-        /^router-link(|-exact)-active$/
-        */
     ],
 
 });

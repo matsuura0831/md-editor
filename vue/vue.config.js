@@ -7,12 +7,12 @@ module.exports = {
                 appId: "com.besolab.md.editor",
                 win: {
                     icon: 'src/assets/app.ico',
-                    target: [
-                        {
-                            target: 'zip', // 'zip', 'nsis', 'portable'
-                            arch: ['x64'] // 'x64', 'ia32'
-                        }
-                    ]
+                    target: "portable", // 'zip', 'nsis', 'portable'
+                },
+                linux: {
+                    icon: 'src/assets/app.png',
+                    target: "deb",
+                    category: "Development"
                 }
             }
         }
