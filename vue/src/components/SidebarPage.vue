@@ -16,7 +16,9 @@
             </div>
 
             <ul id="list-page" class="page-list py-2 px-3 text-sm">
-                <li class="p-2 truncate rounded-lg" v-for="file in files" :key="file.id" :data-file="file.path" @click="changeFile">
+                <li class="p-2 truncate rounded-lg"
+                        :class="{'active': isOwnFile(file.path)}"
+                        v-for="file in files" :key="file.id" :data-file="file.path" @click="changeFile">
                     <span class="mr-1"><i class="far fa-file"></i></span> {{ file.title }}
                 </li>
             </ul>
@@ -44,6 +46,9 @@ export default {
         tag() {
             return this.$store.state.tag;
         },
+        file() {
+            return this.$store.state.file;
+        },
     },
     watch: {
         notebook: function() {
@@ -60,12 +65,10 @@ export default {
         },
     },
     methods: {
+        isOwnFile: function(f) {
+            return f === this.file;
+        },
         changeFile: function(ev) {
-            [...document.querySelectorAll('#list-page li')].forEach((e) => {
-                e.classList.remove('active');
-            });
-            ev.target.classList.add('active');
-
             const f = ev.target.getAttribute('data-file');
             this.$store.commit('changeFile', f);
         },

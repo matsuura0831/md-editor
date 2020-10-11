@@ -60,9 +60,6 @@ export default {
                 this.$store.commit('setNotebooks', notebooks);
                 this.$store.commit('setTags', tags);
             });
-        }).then(() => {
-            // TODO: save and use previous notebook
-            this.$store.commit('changeNotebook', 'general');
         });
     }
 }

@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import createPersistedState from "vuex-persistedstate";
 
 export default createStore({
   state: {
@@ -23,8 +24,10 @@ export default createStore({
     },
     changeNotebook(state, v) {
       state.notebook = v;
+      state.tag = undefined;
     },
     changeTag(state, v) {
+      state.notebook = undefined;
       state.tag = v;
     },
     addTag(state, v) {
@@ -50,8 +53,7 @@ export default createStore({
       state.isShowViewer = ! state.isShowViewer;
     },
   },
-  actions: {
-  },
-  modules: {
-  }
+  actions: { },
+  modules: { },
+  plugins: [createPersistedState()],
 })

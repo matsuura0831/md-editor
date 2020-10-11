@@ -150,10 +150,15 @@ export default {
         },
     },
     watch: {
-        file: function(val, /*old*/) {
-            fsPromises.readFile(val, 'utf-8').then((content) => {
-                editor.session.setValue(content, 1);
-            });
+        file: {
+            immediate: true,
+            handler: (val, /*old*/) => {
+                if(val) {
+                    fsPromises.readFile(val, 'utf-8').then((content) => {
+                        editor.session.setValue(content, 1);
+                    });
+                }
+            },
         },
         isShowEditor: function(val) {
             if(val) {
