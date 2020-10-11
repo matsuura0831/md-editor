@@ -56,8 +56,6 @@
 
 
 <script>
-//import { db_find } from '@/js/util-db';
-
 export default {
     computed: {
         notebooks() {
@@ -79,23 +77,9 @@ export default {
     watch: {
         notebook: function() {
             this.resetHighlight();
-
-            /*
-            const query = { notebook: this.notebook };
-            db_find('markdown', query, {}, {create_at: -1}).then(docs => {
-                this.$store.commit('setFiles', docs);
-            });
-            */
         },
         tag: function() {
             this.resetHighlight();
-
-            /*
-            const query = { tags: { $elemMatch: this.tag }};
-            db_find('markdown', query, {}, {create_at: -1}).then(docs => {
-                this.$store.commit('setFiles', docs);
-            });
-            */
         },
     },
     methods: {
