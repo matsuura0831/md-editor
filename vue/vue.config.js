@@ -3,8 +3,8 @@ module.exports = {
         electronBuilder: {
             nodeIntegration: true,
             builderOptions: {
-                productName: "my-application",
-                appId: "com.sample.myapplication",
+                productName: "mde",
+                appId: "com.besolab.md.editor",
                 win: {
                     icon: 'src/assets/app.ico',
                     target: [
