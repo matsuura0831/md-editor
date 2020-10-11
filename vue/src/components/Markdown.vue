@@ -24,7 +24,7 @@
         <div class="flex-1 flex flex-col bg-gray-300 break-words overflow-auto" :class="{'hidden': !isShowViewer}">
             <div class="flex-none p-4">
                 <div class="text-3xl leading-9 font-extrabold text-gray-900 tracking-tight">{{ fm_title }}</div>
-                <div class="text-base leading-6 font-medium text-gray-500 pl-1">{{ fm_create_at}}</div>
+                <div class="text-base leading-6 font-medium text-gray-500 pl-1">{{ fm_create_at }}</div>
                 <div>
                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
                         v-for="t in fm_tags" :key="t.id">#{{ t }}</span>
@@ -56,7 +56,7 @@ const md = require('markdown-it')({
         breaks: true,
         html: true,
         xhtmlOut: true,
-        typographer: true,
+        typographer: false,
     }) 
     .use(require('markdown-it-plantuml'), {
         server: variables.PLANTUML_SERVER,
@@ -109,11 +109,15 @@ export default {
         enableViewer(editor, document.querySelector('#viewer'), (v) => {
             const { data, content } = frontmatter(v);
 
-            ['title', 'create_at', 'tags'].forEach(t => {
-                self[`fm_${t}`] = data[t]
-
-            });
-            return md.render(content);
+            if(data) {
+                ['title', 'create_at', 'tags'].forEach(t => {
+                    self[`fm_${t}`] = data[t]
+                });
+            }
+            if(content) {
+                return md.render(content);
+            }
+            return "";
         });
         enableDrawio(editor, document.querySelector('#invoke-drawio'), variables.DIAGRAMS_SERVER);
     },
@@ -146,17 +150,21 @@ export default {
         },
         fm_create_at: {
             get() { return this.frontmatter_create_at; },
-            set(v) { this.frontmatter_create_at = v; },
+            set(v) { this.frontmatter_create_at = this.dayjs(v).format(); },
         },
     },
     watch: {
         file: {
             immediate: true,
-            handler: (val, /*old*/) => {
+            handler: function(val) {
                 if(val) {
                     fsPromises.readFile(val, 'utf-8').then((content) => {
                         editor.session.setValue(content, 1);
+                    }).catch(() => {
+                        this.update_markdown([val]);
                     });
+                } else {
+                    editor.session.setValue("", 1);
                 }
             },
         },

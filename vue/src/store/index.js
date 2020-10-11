@@ -19,22 +19,33 @@ export default createStore({
     setNotebooks(state, v) {
       state.notebooks = v;
     },
-    setTags(state, v) {
-      state.tags = v;
+    addNotebook(state, v) {
+      state.notebooks = [...new Set([...state.notebooks, v])];
     },
     changeNotebook(state, v) {
       state.notebook = v;
       state.tag = undefined;
     },
-    changeTag(state, v) {
-      state.notebook = undefined;
-      state.tag = v;
+
+    setTags(state, v) {
+      state.tags = v;
     },
     addTag(state, v) {
       state.tags = [...new Set([...state.tags, v])];
     },
+    changeTag(state, v) {
+      state.notebook = undefined;
+      state.tag = v;
+    },
+
     setFiles(state, v) {
-      state.files= v;
+      state.files = v;
+    },
+    addFile(state, v) {
+      state.files = [...new Set([v, ...state.files])];
+    },
+    removeFileByPath(state, fp) {
+      state.files = state.files.filter(d => d.path != fp)
     },
     changeFile(state, v) {
       state.file = v;

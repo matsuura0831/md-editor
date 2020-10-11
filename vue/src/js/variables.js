@@ -1,9 +1,9 @@
 import path from 'path';
 
 import { remote } from 'electron';
-const { process } = remote;
+const { process, app } = remote;
 
-const DIR_HOME = process.env['MD_HOME'] || process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"],
+const DIR_HOME = process.env['MD_HOME'] || app.getPath('userData'),
     DIR_WORKDIR = path.join(DIR_HOME, '.mde'),
     DIR_NOTEBOOK = path.join(DIR_WORKDIR, 'notebook');
 

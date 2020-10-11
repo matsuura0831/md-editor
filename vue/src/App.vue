@@ -9,7 +9,7 @@ import fs from 'fs';
 const fsPromises = fs.promises;
 
 import variables from '@/js/variables';
-import { db_init, db_find } from '@/js/util-db';
+import { db_init, db_find, db_remove } from '@/js/util-db';
 
 import Editor from './components/Editor.vue';
 
@@ -49,7 +49,13 @@ export default {
         this.readMarkdowns(variables.DIR_NOTEBOOK).then((files) => {
             this.update_markdown(files);
         }).then(() => {
-            // emit notebooks and tags
+            db_find('markdown', {}, {path:1}).then((docs) => {
+                docs.filter(d => !fs.existsSync(d.path)).forEach(d => {
+                    console.log(`Not find: ${d.path}`);
+                    db_remove('markdown', d);
+                });
+            });
+        }).then(() => {
             db_find('markdown', {}, {notebook:1, tags:1}).then((docs) => {
                 const notebooks = [...new Set(['general', 'snippet', ...docs.map((d) => d.notebook)])];
 

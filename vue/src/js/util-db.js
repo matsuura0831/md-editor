@@ -7,6 +7,7 @@ function db_init(base, fp) {
     if(fp instanceof Array) {
         fp = path.join(...fp);
     }
+    console.log(`DB: ${fp}`)
     db[base] = new Datastore({filename: fp, autoload: true});
 }
 
@@ -23,9 +24,9 @@ function db_update(base, query, update, opt) {
     opt = opt || {};
 
     return new Promise((resolve, reject) => {
-        db[base].update(query, update, opt, (err, numReplaced) => {
+        db[base].update(query, update, opt, (err/*, numReplaced*/) => {
             if(err) reject(err)
-            else    resolve(numReplaced);
+            else    resolve(update);
         })
     });
 }
@@ -47,4 +48,15 @@ function db_find(base, query, opt, sorted) {
     })
 }
 
-export { db_init, db_insert, db_update, db_find }
+function db_remove(base, query, opt) {
+    opt = opt || {};
+    
+    return new Promise((resolve, reject) => {
+        db[base].remove(query, opt, (err, numRemoved) => {
+            if(err) reject(err);
+            else    resolve(numRemoved);
+        });
+    });
+}
+
+export { db_init, db_insert, db_update, db_find, db_remove}

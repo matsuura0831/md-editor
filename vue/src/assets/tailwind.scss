@@ -8,7 +8,7 @@
 #nav-notebook {
     @apply bg-gray-800;
 
-    .header { @apply text-white }
+    .header { @apply text-white; }
     .notebook {
         &-header { @apply text-white; }
         &-list {
@@ -48,7 +48,7 @@
     @apply bg-gray-700;
 
     .page {
-        &-header { @apply text-white }
+        &-header { @apply text-white bg-gray-800; }
         &-list {
             @apply text-white;
 
@@ -171,6 +171,10 @@
 
     pre, code, kbd, samp {
         @apply text-xs;
+    }
+
+    :not(pre)>code {
+        @apply bg-gray-400 px-1 mx-1 text-sm;
     }
 
     pre {

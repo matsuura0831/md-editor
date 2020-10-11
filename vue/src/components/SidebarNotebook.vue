@@ -4,13 +4,6 @@
             <div class="flex-auto">
                 <h1 class="font-semibold text-xl leading-tight mb-1 truncate">MD</h1>
             </div>
-            <!--
-            <div>
-                <svg class="h-6 w-6 fill-current text-white opacity-25" viewBox="0 0 20 20">
-                    <path d="M14 8a4 4 0 1 0-8 0v7h8V8zM8.027 2.332A6.003 6.003 0 0 0 4 8v6l-3 2v1h18v-1l-3-2V8a6.003 6.003 0 0 0-4.027-5.668 2 2 0 1 0-3.945 0zM12 18a2 2 0 1 1-4 0h4z" fill-rule="evenodd" />
-                </svg>
-            </div>
-            -->
         </div>
 
         <div class="mb-4">
@@ -19,10 +12,8 @@
                     <span class="mr-1"><i class="fas fa-book"></i></span>
                     Notebook
                 </div>
-                <div class="notebook-add">
-                    <svg class="fill-current h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
-                    </svg>
+                <div class="notebook-add" @click="notebookAdd">
+                    <i class="fas fa-plus-circle"></i>
                 </div>
             </div>
 
@@ -38,11 +29,6 @@
                 <div>
                     <span class="mr-1"><i class="fas fa-tag"></i></span>
                     Tag
-                </div>
-                <div class="tag-add">
-                    <svg class="fill-current h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
-                    </svg>
                 </div>
             </div>
             <ul id="list-tag" class="tag-list py-1 px-6 text-white">
@@ -102,6 +88,17 @@ export default {
         changeTag: function(v) {
             this.$store.commit('changeTag', v);
         },
+        notebookAdd: function() {
+            this.vex.dialog.prompt({
+                message: '作成するノートブック名を入力してください?',
+                placeholder: 'Notebook',
+                callback: (value) => {
+                    if(value) {
+                        this.$store.commit('addNotebook', value);
+                    }
+                }
+            });
+        }
     },
 }
 </script>
