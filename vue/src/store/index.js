@@ -6,8 +6,7 @@ export default createStore({
     notebooks: [],
     tags: [],
     files: [],
-    notebook: undefined,
-    tag: undefined,
+    notebook_or_tag: {},
     file: undefined,
 
     isShowNotebook: true,
@@ -23,8 +22,7 @@ export default createStore({
       state.notebooks = [...new Set([...state.notebooks, v])];
     },
     changeNotebook(state, v) {
-      state.notebook = v;
-      state.tag = undefined;
+      state.notebook_or_tag = {notebook: v, tag: undefined};
     },
 
     setTags(state, v) {
@@ -34,8 +32,7 @@ export default createStore({
       state.tags = [...new Set([...state.tags, v])];
     },
     changeTag(state, v) {
-      state.notebook = undefined;
-      state.tag = v;
+      state.notebook_or_tag = {tag: v, notebook: undefined};
     },
 
     setFiles(state, v) {

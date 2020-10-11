@@ -3,16 +3,20 @@
         <div class="mb-4">
             <div class="page-header h-8 px-4 flex flex-row items-center justify-between">
                 <div class="text-xs leading-tight mb-1 truncate">
-                    <span>{{ notebook || tag }}</span>
+                    <span>{{ notebook_or_tag.notebook || notebook_or_tag.tag }}</span>
                 </div>
 
                 <div class="flex flex-row">
-                    <div class="page-add mr-4" @click="pageAdd">
+                    <div class="page-add mr-4" @click="pageAdd" v-if="notebook_or_tag.notebook">
                         <i class="fas fa-plus-circle"></i>
                     </div>
 
-                    <div class="page-remove" @click="pageRemove">
+                    <div class="page-remove mr-4" @click="pageRemove" v-if="notebook_or_tag.notebook">
                         <i class="fas fa-minus-circle"></i>
+                    </div>
+
+                    <div class="page-rename" @click="pageRename">
+                        <i class="fas fa-spell-check"></i>
                     </div>
                 </div>
             </div>
@@ -62,33 +66,32 @@ export default {
         isShowPage() {
             return this.$store.state.isShowPage;
         },
-        notebook() {
-            return this.$store.state.notebook;
-        },
-        tag() {
-            return this.$store.state.tag;
+        notebook_or_tag() {
+            return this.$store.state.notebook_or_tag;
         },
         file() {
             return this.$store.state.file;
         },
     },
     watch: {
-        notebook: function() {
-            this.refleshPagesByNotebook();
-        },
-        tag: function() {
-            this.refleshPagesByTag();
+        notebook_or_tag: function() {
+            if(this.notebook_or_tag.notebook) {
+                this.refleshPagesByNotebook();
+            }
+            if(this.notebook_or_tag.tag) {
+                this.refleshPagesByTag();
+            }
         },
     },
     methods: {
         refleshPagesByNotebook: function() {
-            const query = { notebook: this.notebook };
+            const query = { notebook: this.notebook_or_tag.notebook };
             db_find('markdown', query, {}, {create_at: -1}).then(docs => {
                 this.$store.commit('setFiles', docs);
             });
         },
         refleshPagesByTag: function() {
-            const query = { tags: { $elemMatch: this.tag }};
+            const query = { tags: { $elemMatch: this.notebook_or_tag.tag }};
             db_find('markdown', query, {}, {create_at: -1}).then(docs => {
                 this.$store.commit('setFiles', docs);
             });
@@ -141,8 +144,7 @@ export default {
                         name = `${value.title}.md`
                     }
 
-                    // TODO disable create button if TAG mode
-                    const fp = path.join(variables.DIR_NOTEBOOK, this.notebook, name);
+                    const fp = path.join(variables.DIR_NOTEBOOK, this.notebook_or_tag.notebook, name);
                     const dir = path.dirname(fp);
 
                     if(!fs.existsSync(dir)) fs.mkdirSync(dir);
@@ -156,13 +158,36 @@ export default {
             });
         },
         pageRemove: function() {
+            const name = path.basename(this.file);
+
             this.vex.dialog.confirm({
-                message: `以下のファイルを削除しますか?\n${this.file}`,
+                message: `ファイルを削除しますか? ${name}`,
                 callback: (value) => {
                     if(value) {
                         fsPromises.unlink(this.file).then(() => {
                             return this.update_markdown([this.file]);
                         }).then(() => {
+                            this.$store.commit('removeFileByPath', this.file);
+                        });
+                    }
+                }
+            });
+        },
+        pageRename: function() {
+            const name = path.basename(this.file);
+            const dir = path.dirname(this.file);
+
+            this.vex.dialog.prompt({
+                message: `ファイル名を変更しますか? ${name}`,
+                placeholder: `${name}`,
+                callback: (value) => {
+                    if(value) {
+                        const dst = path.join(dir, value);
+
+                        fsPromises.rename(this.file, dst).then(() => {
+                            return this.update_markdown([[this.file, dst]]);
+                        }).then((docs) => {
+                            this.$store.commit('addFile', docs[0]);
                             this.$store.commit('removeFileByPath', this.file);
                         });
                     }

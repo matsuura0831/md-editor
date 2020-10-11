@@ -41,21 +41,24 @@ export default {
         update_markdown: function(files) {
             return Promise.all(files.map(fp => {
                 return new Promise((resolve, reject) => {
-                    fsPromises.readFile(fp, 'utf-8').then((content) => {
+                    const [old_fp, new_fp] = Array.isArray(fp) ? fp : [fp, fp];
+                    console.log(old_fp, new_fp);
+
+                    fsPromises.readFile(new_fp, 'utf-8').then((content) => {
                         const { data:fm, errors } = frontmatter(content);
                         if (errors.length > 0) reject(errors);
 
-                        const query = { path: fp };
+                        const query = { path: old_fp };
                         const opt = { upsert: true }
 
                         const create_at = (fm && fm.create_at) ? dayjs(fm.create_at) : dayjs();
-                        const file = path.basename(fp);
+                        const file = path.basename(new_fp);
                         const name = file.split('.')[0];
-                        const notebook = path.basename(path.dirname(fp));
+                        const notebook = path.basename(path.dirname(new_fp));
                         const title = notebook == "snippet" ? name : fm.title || name;
 
                         const data = {
-                            path: fp,
+                            path: new_fp,
                             file: file,
                             notebook: notebook,
                             title: title,
@@ -67,7 +70,7 @@ export default {
                             resolve(data);
                         }).catch(reject);
                     }).catch(() => {
-                        db_remove('markdown', {path: fp}).then(resolve).catch(reject);
+                        db_remove('markdown', {path: old_fp}).then(resolve).catch(reject);
                     });
                 });
             }));

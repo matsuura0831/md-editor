@@ -50,24 +50,20 @@ export default {
         tags() {
             return this.$store.state.tags;
         },
-        notebook() {
-            return this.$store.state.notebook;
-        },
-        tag() {
-            return this.$store.state.tag;
+        notebook_or_tag() {
+            return this.$store.state.notebook_or_tag;
         },
         isShowNotebook() {
             return this.$store.state.isShowNotebook;
         },
     },
+    /*
     watch: {
-        notebook: function() {
-            this.resetHighlight();
-        },
-        tag: function() {
+        notebook_or_tag: function() {
             this.resetHighlight();
         },
     },
+    */
     methods: {
         resetHighlight: function() {
             ['#list-tag li', '#list-notebook li'].forEach(q => {
@@ -77,10 +73,10 @@ export default {
             })
         },
         isOwnNotebook: function(v) {
-            return v == this.notebook;
+            return this.notebook_or_tag.notebook && v == this.notebook_or_tag.notebook;
         },
         isOwnTag: function(v) {
-            return v == this.tag;
+            return this.notebook_or_tag.tag && v == this.notebook_or_tag.tag;
         },
         changeNotebook: function(v) {
             this.$store.commit('changeNotebook', v);
