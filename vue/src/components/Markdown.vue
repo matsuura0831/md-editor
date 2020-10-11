@@ -164,7 +164,7 @@ export default {
                         this.update_markdown([val]);
                     });
                 } else {
-                    editor.session.setValue("", 1);
+                    if(editor) editor.session.setValue("", 1);
                 }
             },
         },
