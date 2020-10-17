@@ -1,5 +1,5 @@
 ---
-title: Tutorials
+title: tutorials
 create_at: 2020-10-11 18:53:14
 tags: [Tutirial, Markdown]
 ---
