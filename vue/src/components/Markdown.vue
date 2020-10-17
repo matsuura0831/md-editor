@@ -161,8 +161,9 @@ export default {
                     fsPromises.readFile(val, 'utf-8').then((content) => {
                         editor.session.setValue(content, 1);
                     }).catch(async () => {
-                        await this.update_markdown([val]);
-                        this.$store.commit('removeFileByPath', this.file);
+                        await this.update_markdown(val);
+                        this.$store.commit('removeFileByPath', val);
+                        this.$store.commit('setFile', undefined);
                     });
                 } else {
                     if(editor) editor.session.setValue("", 1);
@@ -188,14 +189,16 @@ export default {
         },
     },
     methods: {
-        saveFile() {
-            fsPromises.writeFile(this.file, editor.getValue()).then(() => {
-                this.update_markdown([this.file]).then(docs => {
-                    docs[0].tags.forEach(e => {
-                        this.$store.commit('addTags', e);
-                    });
+        async saveFile() {
+            if(this.file) {
+                await fsPromises.writeFile(this.file, editor.getValue());
+                const docs = await this.update_markdown(this.file);
+                const { tags } = docs[0].data;
+
+                tags.forEach(e => {
+                    this.$store.commit('addTags', e);
                 });
-            });
+            }
         },
         toggle(v) {
             const mode = v.charAt(0).toUpperCase() + v.slice(1);

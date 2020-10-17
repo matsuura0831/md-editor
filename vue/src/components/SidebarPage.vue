@@ -158,9 +158,11 @@ export default {
 
                     if(!fs.existsSync(dir)) fs.mkdirSync(dir);
                     await fsPromises.writeFile(fp, content);
-                    const docs = await this.update_markdown([fp]);
 
-                    this.$store.commit('addFiles', docs[0]);
+                    const docs = await this.update_markdown(fp);
+                    const { data } = docs[0];
+
+                    this.$store.commit('addFiles', data);
                     this.setFile(fp);
                 }
             });
@@ -173,8 +175,9 @@ export default {
                 callback: async (value) => {
                     if(value) {
                         await fsPromises.unlink(this.file);
-                        await this.update_markdown([this.file]);
+                        await this.update_markdown(this.file);
                         this.$store.commit('removeFileByPath', this.file);
+                        this.$store.commit('setFile', undefined);
                     }
                 }
             });
@@ -186,16 +189,17 @@ export default {
             this.vex.dialog.prompt({
                 message: `ファイル名を変更しますか?`,
                 value: `${name}`,
-                callback: (value) => {
+                callback: async (value) => {
                     if(value) {
                         const dst = path.join(dir, value);
 
-                        fsPromises.rename(this.file, dst).then(() => {
-                            return this.update_markdown([[this.file, dst]]);
-                        }).then((docs) => {
-                            this.$store.commit('addFiles', docs[0]);
-                            this.$store.commit('removeFileByPath', this.file);
-                        });
+                        await fsPromises.rename(this.file, dst);
+                        const docs = await this.update_markdown([[this.file, dst]]);
+                        const { data } = docs[0];
+
+                        this.$store.commit('addFiles', data);
+                        this.$store.commit('removeFileByPath', this.file);
+                        this.$store.commit('setFile', dst);
                     }
                 }
             });

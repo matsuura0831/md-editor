@@ -40,6 +40,8 @@ export default {
             return g ? g.map(e => e.slice(2, -1)) : [];
         },
         update_markdown: function(files) {
+            if(!Array.isArray(files)) files = [files];
+
             return Promise.all(files.map(fp => {
                 return new Promise((resolve, reject) => {
                     const [old_fp, new_fp] = Array.isArray(fp) ? fp : [fp, fp];
@@ -72,9 +74,9 @@ export default {
                         };
 
                         db_update('markdown', query, data, opt).then(() => {
-                            resolve(data);
+                            resolve({data: data, frontmatter: fm});
                         });
-                    })().catch((e) => {
+                    })().catch(() => {
                         db_remove('markdown', {path: old_fp}).then(resolve).catch(reject);
                     });
                 });
