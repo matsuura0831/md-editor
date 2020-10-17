@@ -157,12 +157,11 @@ export default {
                     const dir = path.dirname(fp);
 
                     if(!fs.existsSync(dir)) fs.mkdirSync(dir);
-                    fsPromises.writeFile(fp, content).then(() => {
-                        this.update_markdown([fp]).then(d => {
-                            this.$store.commit('addFiles', d[0]);
-                            this.setFile(fp);
-                        });
-                    });
+                    await fsPromises.writeFile(fp, content);
+                    const docs = await this.update_markdown([fp]);
+
+                    this.$store.commit('addFiles', docs[0]);
+                    this.setFile(fp);
                 }
             });
         },
@@ -171,13 +170,11 @@ export default {
 
             this.vex.dialog.confirm({
                 message: `${name} を削除しますか?`,
-                callback: (value) => {
+                callback: async (value) => {
                     if(value) {
-                        fsPromises.unlink(this.file).then(() => {
-                            return this.update_markdown([this.file]);
-                        }).then(() => {
-                            this.$store.commit('removeFileByPath', this.file);
-                        });
+                        await fsPromises.unlink(this.file);
+                        await this.update_markdown([this.file]);
+                        this.$store.commit('removeFileByPath', this.file);
                     }
                 }
             });
