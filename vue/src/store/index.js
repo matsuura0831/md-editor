@@ -1,21 +1,8 @@
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
+import { toCamelCase } from "../js/util"
 
 import store from "@/assets/store.json";
-
-function toCamelCase(str, first = true) {
-    const ret = str.split('_').map((w, i) => {
-        if (i === 0) {
-            return w.toLowerCase();
-        }
-        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
-    }).join('');
-
-    if (first) {
-        return ret.charAt(0).toUpperCase() + ret.slice(1);
-    }
-    return ret;
-}
 
 const VALUE_FACTORY = {
     'array': (d) => Array.isArray(d) ? [...d] : [],
