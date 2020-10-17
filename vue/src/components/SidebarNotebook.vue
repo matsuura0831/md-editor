@@ -5,7 +5,7 @@
                 <h1 class="font-semibold text-xl leading-tight mb-1 truncate">MD</h1>
             </div>
 
-            <div class="setting" @click="setting">
+            <div class="setting">
                 <router-link to="about">
                     <i class="fas fa-tools"></i>
                 </router-link>
@@ -60,16 +60,9 @@ export default {
             return this.$store.state.notebook_or_tag;
         },
         isShowNotebook() {
-            return this.$store.state.isShowNotebook;
+            return this.$store.state.show_notebook;
         },
     },
-    /*
-    watch: {
-        notebook_or_tag: function() {
-            this.resetHighlight();
-        },
-    },
-    */
     methods: {
         resetHighlight() {
             ['#list-tag li', '#list-notebook li'].forEach(q => {

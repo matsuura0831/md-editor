@@ -8,7 +8,7 @@
                 <button id="toggle-page" class="ml-1 w-6 h-6"
                     @click="toggle('page')" :class="{ 'nav-toggle-off': !isShowPage}"><i class="fas fa-file-alt"></i></button>
                 <button id="toggle-editor" class="ml-1 w-6 h-6"
-                    @click="toggle('editor')" :class="{ 'nav-toggle-off': !isShowEditor}"><i class="fas fa-edit"></i></button>
+                    @click="toggle('editor');" :class="{ 'nav-toggle-off': !isShowEditor}"><i class="fas fa-edit"></i></button>
                 <button id="toggle-viewer" class="ml-1 w-6 h-6"
                     @click="toggle('viewer')" :class="{ 'nav-toggle-off': !isShowViewer}"><i class="fas fa-book-open"></i></button>
             </div>
@@ -52,51 +52,50 @@ import 'highlight.js/styles/atom-one-dark.css'
 import variables from '@/js/variables';
 import { enableViewer, enableDrawio} from '@/js/util-ace';
 
-const md = require('markdown-it')({
-        linkify: true,
-        breaks: true,
-        html: true,
-        xhtmlOut: true,
-        typographer: false,
-    }) 
-    .use(require('markdown-it-plantuml'), {
-        server: variables.PLANTUML_SERVER,
-    })
-    .use(require('markdown-it-abbr'))
-    .use(require('markdown-it-ins'))
-    .use(require('markdown-it-mark'))
-    .use(require('markdown-it-sub'))
-    .use(require('markdown-it-sup'))
-    .use(require('markdown-it-footnote'))
-    .use(require('markdown-it-emoji'))
-    // load custom plugins
-    .use(require('@/js/plugins/markdown-it-target-blank'))
-    .use(require('@/js/plugins/markdown-it-drawio'))
-    .use(require('@/js/plugins/markdown-it-highlight'))
-    .use(require('@/js/plugins/markdown-it-message'))
-    .use(require('@/js/plugins/markdown-it-inject-line-no'));
-
-let editor = undefined;
-
 export default {
     data() {
         return {
             frontmatter_title: '',
             frontmatter_tags: [],
             frontmatter_create_at: '',
+
+            editor: undefined,
+            md: require('markdown-it')({
+                    linkify: true,
+                    breaks: true,
+                    html: true,
+                    xhtmlOut: true,
+                    typographer: false,
+                }) 
+                .use(require('markdown-it-plantuml'), {
+                    server: variables.PLANTUML_SERVER,
+                })
+                .use(require('markdown-it-abbr'))
+                .use(require('markdown-it-ins'))
+                .use(require('markdown-it-mark'))
+                .use(require('markdown-it-sub'))
+                .use(require('markdown-it-sup'))
+                .use(require('markdown-it-footnote'))
+                .use(require('markdown-it-emoji'))
+                // load custom plugins
+                .use(require('@/js/plugins/markdown-it-target-blank'))
+                .use(require('@/js/plugins/markdown-it-drawio'))
+                .use(require('@/js/plugins/markdown-it-highlight'))
+                .use(require('@/js/plugins/markdown-it-message'))
+                .use(require('@/js/plugins/markdown-it-inject-line-no')),
         }
     },
     mounted() {
         const self = this;
 
-        editor = ace.edit('editor', {
+        this.editor = ace.edit('editor', {
             theme: 'ace/theme/monokai',
             mode: 'ace/mode/markdown',
             wrap: true,
             scrollPastEnd: 0.5,
             showPrintMargin: false,
         });
-        editor.setKeyboardHandler("ace/keyboard/vim");
+        this.editor.setKeyboardHandler("ace/keyboard/vim");
 
         // キーバインディングは以下のように取得できる
         ace.config.loadModule("ace/keyboard/vim", function(m) {
@@ -107,7 +106,7 @@ export default {
         })
 
         // Aceエディタのユーティリティ機能を有効化する
-        enableViewer(editor, document.querySelector('#viewer'), (v) => {
+        enableViewer(this.editor, document.querySelector('#viewer'), (v) => {
             const { data, content } = frontmatter(v);
 
             if(data) {
@@ -116,27 +115,31 @@ export default {
                 });
             }
             if(content) {
-                return md.render(content);
+                return this.md.render(content);
             }
             return "";
         });
-        enableDrawio(editor, document.querySelector('#invoke-drawio'), variables.DIAGRAMS_SERVER);
+        enableDrawio(this.editor, document.querySelector('#invoke-drawio'), variables.DIAGRAMS_SERVER);
+
+        if(!this.isShowEditor) {
+            document.querySelector('#editor').classList.add('hidden');
+        }
     },
     computed: {
         file() {
             return this.$store.state.file;
         },
         isShowNotebook() {
-            return this.$store.state.isShowNotebook;
+            return this.$store.state.show_notebook;
         },
         isShowPage() {
-            return this.$store.state.isShowPage;
+            return this.$store.state.show_page;
         },
         isShowEditor() {
-            return this.$store.state.isShowEditor;
+            return this.$store.state.show_editor;
         },
         isShowViewer() {
-            return this.$store.state.isShowViewer;
+            return this.$store.state.show_viewer;
         },
         enable_frontmatter() {
             return this.frontmatter_init;
@@ -160,14 +163,14 @@ export default {
             handler(val) {
                 if(val) {
                     fsPromises.readFile(val, 'utf-8').then((content) => {
-                        editor.session.setValue(content, 1);
+                        this.editor.session.setValue(content, 1);
                     }).catch(async () => {
                         await this.update_markdown(val);
                         this.$store.commit('removeFileByPath', val);
                         this.$store.commit('setFile', undefined);
                     });
                 } else {
-                    if(editor) editor.session.setValue("", 1);
+                    if(this.editor) this.editor.session.setValue("", 1);
                 }
             },
         },
@@ -177,16 +180,16 @@ export default {
             } else {
                 document.querySelector('#editor').classList.add('hidden');
             }
-            editor.resize();
+            this.editor.resize();
         },
         isShowNotebook() {
-            editor.resize();
+            this.editor.resize();
         },
         isShowPage() {
-            editor.resize();
+            this.editor.resize();
         },
         isShowViewer() {
-            editor.resize();
+            this.editor.resize();
         },
     },
     methods: {
@@ -194,7 +197,7 @@ export default {
             if(this.file) {
                 const crnt = this.file;
 
-                const v = editor.getValue();
+                const v = this.editor.getValue();
                 const { permalink } = frontmatter(v).data;
                 const fp = path.join(path.dirname(crnt), permalink);
 
@@ -221,12 +224,12 @@ export default {
         },
         toggle(v) {
             const mode = v.charAt(0).toUpperCase() + v.slice(1);
-            this.$store.commit(`toggle${mode}`);
+            this.$store.commit(`toggleShow${mode}`);
         },
 
         invokeNow() {
             const t = `${this.dayjs().format()}\n`;
-            editor.session.insert(editor.getCursorPosition(), t);
+            this.editor.session.insert(this.editor.getCursorPosition(), t);
         },
     },
 }

@@ -64,7 +64,7 @@ export default {
             return this.$store.state.files;
         },
         isShowPage() {
-            return this.$store.state.isShowPage;
+            return this.$store.state.show_page;
         },
         notebook_or_tag() {
             return this.$store.state.notebook_or_tag;
