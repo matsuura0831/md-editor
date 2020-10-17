@@ -44,27 +44,26 @@ export default {
 
             return Promise.all(files.map(fp => {
                 return new Promise((resolve, reject) => {
-                    const [old_fp, new_fp] = Array.isArray(fp) ? fp : [fp, fp];
+                    const d = (typeof fp === 'object') ? fp: { 'old': fp, 'new': fp };
 
                     (async() => {
-                        const content = await fsPromises.readFile(new_fp, 'utf-8')                        
-                        const stats = await fsPromises.stat(new_fp);
+                        const stats = await fsPromises.stat(d.new);
 
-                        const { data:fm, errors } = frontmatter(content);
-                        if (errors.length > 0) reject(errors);
+                        const content = await fsPromises.readFile(d.new, 'utf-8')                        
+                        const { data:fm } = frontmatter(content);
 
-                        const query = { path: old_fp };
+                        const query = { path: d.old };
                         const opt = { upsert: true }
 
                         const create_at = fm.create_at ? dayjs(fm.create_at) : dayjs();
                         const update_at = dayjs(stats.mtime);
-                        const file = path.basename(new_fp);
+                        const file = path.basename(d.new);
                         const name = file.split('.')[0];
-                        const notebook = path.basename(path.dirname(new_fp));
+                        const notebook = path.basename(path.dirname(d.new));
                         const title = notebook == "snippet" ? name : fm.title || name;
 
                         const data = {
-                            path: new_fp,
+                            path: d.new,
                             file: file,
                             notebook: notebook,
                             title: title,
@@ -77,7 +76,7 @@ export default {
                             resolve({data: data, frontmatter: fm});
                         });
                     })().catch(() => {
-                        db_remove('markdown', {path: old_fp}).then(resolve).catch(reject);
+                        db_remove('markdown', {path: d.old}).then(resolve).catch(reject);
                     });
                 });
             }));

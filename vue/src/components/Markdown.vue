@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import path from 'path';
 import fs from 'fs';
 const fsPromises = fs.promises;
 
@@ -191,13 +192,31 @@ export default {
     methods: {
         async saveFile() {
             if(this.file) {
-                await fsPromises.writeFile(this.file, editor.getValue());
-                const docs = await this.update_markdown(this.file);
-                const { tags } = docs[0].data;
+                const crnt = this.file;
 
-                tags.forEach(e => {
+                const v = editor.getValue();
+                const { permalink } = frontmatter(v).data;
+                const fp = path.join(path.dirname(crnt), permalink);
+
+                const promises = [fsPromises.writeFile(fp, v)];
+                if(fp != crnt) {
+                    promises.push(fsPromises.unlink(crnt));
+                }
+                await Promise.all(promises);
+
+                const docs = await this.update_markdown({old: crnt, new: fp});
+                const { data } = docs[0];
+
+                data.tags.forEach(e => {
                     this.$store.commit('addTags', e);
                 });
+
+                if(fp != crnt) {
+                    this.$store.commit('addFiles', data);
+                    this.$store.commit('removeFileByPath', crnt);
+                    this.$store.commit('setFile', fp);
+                }
+
             }
         },
         toggle(v) {

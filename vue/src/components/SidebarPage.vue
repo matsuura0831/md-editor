@@ -7,16 +7,16 @@
                 </div>
 
                 <div class="flex flex-row">
-                    <div class="page-add mr-4" @click="pageAdd" v-if="notebook_or_tag.notebook">
+                    <div class="page-rename ml-4" @click="pageRename" v-if="notebook_or_tag.notebook == 'snippet'">
+                        <i class="fas fa-spell-check"></i>
+                    </div>
+
+                    <div class="page-add ml-4" @click="pageAdd" v-if="notebook_or_tag.notebook">
                         <i class="fas fa-plus-circle"></i>
                     </div>
 
-                    <div class="page-remove mr-4" @click="pageRemove" v-if="notebook_or_tag.notebook">
+                    <div class="page-remove ml-4" @click="pageRemove" v-if="notebook_or_tag.notebook">
                         <i class="fas fa-minus-circle"></i>
-                    </div>
-
-                    <div class="page-rename" @click="pageRename">
-                        <i class="fas fa-spell-check"></i>
                     </div>
                 </div>
             </div>
@@ -194,7 +194,7 @@ export default {
                         const dst = path.join(dir, value);
 
                         await fsPromises.rename(this.file, dst);
-                        const docs = await this.update_markdown([[this.file, dst]]);
+                        const docs = await this.update_markdown({old: this.file, new: dst});
                         const { data } = docs[0];
 
                         this.$store.commit('addFiles', data);
