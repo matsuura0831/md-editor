@@ -85,7 +85,7 @@ export default {
             frontmatter_create_at: '',
         }
     },
-    mounted: function() {
+    mounted() {
         const self = this;
 
         editor = ace.edit('editor', {
@@ -156,7 +156,7 @@ export default {
     watch: {
         file: {
             immediate: true,
-            handler: function(val) {
+            handler(val) {
                 if(val) {
                     fsPromises.readFile(val, 'utf-8').then((content) => {
                         editor.session.setValue(content, 1);
@@ -168,7 +168,7 @@ export default {
                 }
             },
         },
-        isShowEditor: function(val) {
+        isShowEditor(val) {
             if(val) {
                 document.querySelector('#editor').classList.remove('hidden');
             } else {
@@ -176,18 +176,18 @@ export default {
             }
             editor.resize();
         },
-        isShowNotebook: function() {
+        isShowNotebook() {
             editor.resize();
         },
-        isShowPage: function() {
+        isShowPage() {
             editor.resize();
         },
-        isShowViewer: function() {
+        isShowViewer() {
             editor.resize();
         },
     },
     methods: {
-        saveFile: function() {
+        saveFile() {
             fsPromises.writeFile(this.file, editor.getValue()).then(() => {
                 this.update_markdown([this.file]).then(docs => {
                     docs[0].tags.forEach(e => {
@@ -196,12 +196,12 @@ export default {
                 });
             });
         },
-        toggle: function(v) {
+        toggle(v) {
             const mode = v.charAt(0).toUpperCase() + v.slice(1);
             this.$store.commit(`toggle${mode}`);
         },
 
-        invokeNow: function() {
+        invokeNow() {
             const t = `${this.dayjs().format()}\n`;
             editor.session.insert(editor.getCursorPosition(), t);
         },

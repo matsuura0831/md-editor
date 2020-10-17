@@ -77,7 +77,7 @@ export default {
         }
     },
     watch: {
-        notebook_or_tag: function() {
+        notebook_or_tag() {
             if(this.notebook_or_tag.notebook) {
                 this.refleshPagesByNotebook();
             }
@@ -87,19 +87,19 @@ export default {
         },
     },
     methods: {
-        refleshPagesByNotebook: function() {
+        refleshPagesByNotebook() {
             const query = { notebook: this.notebook_or_tag.notebook };
             db_find('markdown', query, {}, {create_at: -1}).then(docs => {
                 this.$store.commit('setFiles', docs);
             });
         },
-        refleshPagesByTag: function() {
+        refleshPagesByTag() {
             const query = { tags: { $elemMatch: this.notebook_or_tag.tag }};
             db_find('markdown', query, {}, {create_at: -1}).then(docs => {
                 this.$store.commit('setFiles', docs);
             });
         },
-        pageAdd: async function() {
+        async pageAdd() {
             const options = (await db_find('markdown', { notebook: 'snippet' })).map(d => {
                 console.log(d.file, this.snippet);
                 const opt = (d.file == this.snippet) ? " selected" : ""
@@ -166,7 +166,7 @@ export default {
                 }
             });
         },
-        pageRemove: function() {
+        pageRemove() {
             const name = path.basename(this.file);
 
             this.vex.dialog.confirm({
@@ -182,7 +182,7 @@ export default {
                 }
             });
         },
-        pageRename: function() {
+        pageRename() {
             const name = path.basename(this.file);
             const dir = path.dirname(this.file);
 
@@ -203,13 +203,13 @@ export default {
                 }
             });
         },
-        isOwnFile: function(f) {
+        isOwnFile(f) {
             return f === this.file;
         },
-        changeFile: function(f) {
+        changeFile(f) {
             this.$store.commit('changeFile', f);
         },
-        search: function() {
+        search() {
             const text = document.querySelector('#nav-page input').value;
             const re = new RegExp(text);
 

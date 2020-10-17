@@ -71,26 +71,26 @@ export default {
     },
     */
     methods: {
-        resetHighlight: function() {
+        resetHighlight() {
             ['#list-tag li', '#list-notebook li'].forEach(q => {
                 [...document.querySelectorAll(q)].forEach(e => {
                     e.classList.remove('active');
                 });
             })
         },
-        isOwnNotebook: function(v) {
+        isOwnNotebook(v) {
             return this.notebook_or_tag.notebook && v == this.notebook_or_tag.notebook;
         },
-        isOwnTag: function(v) {
+        isOwnTag(v) {
             return this.notebook_or_tag.tag && v == this.notebook_or_tag.tag;
         },
-        changeNotebook: function(v) {
+        changeNotebook(v) {
             this.$store.commit('changeNotebook', v);
         },
-        changeTag: function(v) {
+        changeTag(v) {
             this.$store.commit('changeTag', v);
         },
-        notebookAdd: function() {
+        notebookAdd() {
             this.vex.dialog.prompt({
                 message: '作成するノートブック名を入力してください?',
                 placeholder: 'Notebook',
