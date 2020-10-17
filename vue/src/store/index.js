@@ -1,73 +1,74 @@
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 
-export default createStore({
-  state: {
-    notebooks: [],
-    tags: [],
-    files: [],
-    notebook_or_tag: {},
-    file: undefined,
+import store from "@/assets/store.json";
 
-    isShowNotebook: true,
-    isShowPage: true,
-    isShowEditor: true,
-    isShowViewer: true,
+function toCamelCase(str, first = true) {
+    const ret = str.split('_').map((w, i) => {
+        if (i === 0) {
+            return w.toLowerCase();
+        }
+        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    }).join('');
 
-    selected_snippet: '',
-  },
-  mutations: {
-    setNotebooks(state, v) {
-      state.notebooks = v;
-    },
-    addNotebook(state, v) {
-      state.notebooks = [...new Set([...state.notebooks, v])];
-    },
-    changeNotebook(state, v) {
-      state.notebook_or_tag = {notebook: v, tag: undefined};
-    },
-
-    setTags(state, v) {
-      state.tags = v;
-    },
-    addTag(state, v) {
-      state.tags = [...new Set([...state.tags, v])];
-    },
-    changeTag(state, v) {
-      state.notebook_or_tag = {tag: v, notebook: undefined};
-    },
-
-    setFiles(state, v) {
-      state.files = v;
-    },
-    addFile(state, v) {
-      state.files = [...new Set([v, ...state.files])];
-    },
-    removeFileByPath(state, fp) {
-      state.files = state.files.filter(d => d.path != fp)
-    },
-    changeFile(state, v) {
-      state.file = v;
-    },
-
-    toggleNotebook(state) {
-      state.isShowNotebook = ! state.isShowNotebook;
-    },
-    togglePage(state) {
-      state.isShowPage = ! state.isShowPage;
-    },
-    toggleEditor(state) {
-      state.isShowEditor = ! state.isShowEditor;
-    },
-    toggleViewer(state) {
-      state.isShowViewer = ! state.isShowViewer;
-    },
-
-    selectSnippet(state, v) {
-      state.selected_snippet = v;
+    if (first) {
+        return ret.charAt(0).toUpperCase() + ret.slice(1);
     }
-  },
-  actions: { },
-  modules: { },
-  plugins: [createPersistedState()],
+    return ret;
+}
+
+const VALUE_FACTORY = {
+    'array': (d) => Array.isArray(d) ? [...d] : [],
+    'object': (d) => (d !== null && typeof d === 'object') ? { ...d } : {},
+    'string': (d) => d,
+    'boolean': (d) => d ? true : false,
+};
+const FUNCTION_FACTORY = {
+    'default': (m, name, camel_name) => {
+        m[`set${camel_name}`] = (state, v) => { state[name] = v };
+        m[`get${camel_name}`] = (state) => { return state[name] };
+    },
+    'array': (m, name, camel_name, opt) => {
+        if ('first' in opt && opt.first) {
+            m[`add${camel_name}`] = (state, v) => { state[name] = [v, ...state[name]] }
+        } else {
+            m[`add${camel_name}`] = (state, v) => { state[name] = [...state[name], v] }
+        }
+
+        if ('drop_duplicate' in opt && opt.drop_duplicate) {
+            const org = m[`add${camel_name}`];
+            m[`add${camel_name}`] = (state, v) => { state[name] = [...new Set(org(state, v))] }
+        }
+    },
+    'boolean': (m, name, camel_name/*, opt*/) => {
+        m[`toggle${camel_name}`] = (state) => { state[name] = !state[name] };
+    }
+};
+
+const state = {}, mutations = {};
+
+store.map(e => {
+    const { name, default: d, type = 'string', opt } = e;
+    const lower_type = type.toLowerCase();
+    const camel_name = toCamelCase(name);
+
+    state[name] = VALUE_FACTORY[lower_type](d);
+
+    FUNCTION_FACTORY['default'](mutations, name, camel_name, opt);
+    if (lower_type in FUNCTION_FACTORY) {
+        FUNCTION_FACTORY[lower_type](mutations, name, camel_name, opt);
+    }
+});
+
+// additional mutations
+mutations['changeNotebook'] = (state, v) => { state.notebook_or_tag = { notebook: v, tag: undefined } };
+mutations['changeTag'] = (state, v) => { state.notebook_or_tag = { notebook: undefined, tag: v } };
+mutations['removeFileByPath'] = (state, v) => { state.files = state.files.filter(d => d.path != v) };
+
+export default createStore({
+    state: state,
+    mutations: mutations,
+    actions: {},
+    modules: {},
+    plugins: [createPersistedState()],
 })

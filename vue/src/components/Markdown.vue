@@ -191,7 +191,7 @@ export default {
             fsPromises.writeFile(this.file, editor.getValue()).then(() => {
                 this.update_markdown([this.file]).then(docs => {
                     docs[0].tags.forEach(e => {
-                        this.$store.commit('addTag', e);
+                        this.$store.commit('addTags', e);
                     });
                 });
             });

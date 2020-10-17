@@ -1,0 +1,66 @@
+[
+    {
+        "name": "notebooks",
+        "description": "使用中のノートブックのリスト",
+        "type": "Array",
+        "opt": {
+            "drop_duplicate": 0
+        }
+    },
+    {
+        "name": "tags",
+        "description": "使用中のタグリスト",
+        "type": "Array",
+        "opt": {
+            "drop_duplicate": 0
+        }
+    },
+    {
+        "name": "files",
+        "description": "選択したノートブックまたはタグに含まれるファイルリスト",
+        "type": "Array",
+        "opt": {
+            "drop_duplicate": 0,
+            "first": 1
+        }
+    },
+    {
+        "name": "notebook_or_tag",
+        "description": "選択したノートブックまたはタグ",
+        "type": "Object"
+    },
+    {
+        "name": "file",
+        "description": "選択したファイル",
+        "type": "String"
+    },
+    {
+        "name": "show_notebook",
+        "description": "ノートブックパネルを表示するか否か",
+        "type": "Boolean",
+        "default": 1
+    },
+    {
+        "name": "show_page",
+        "description": "ページパネルを表示するか否か",
+        "type": "Boolean",
+        "default": 1
+    },
+    {
+        "name": "show_editor",
+        "description": "エディタパネルを表示するか否か",
+        "type": "Boolean",
+        "default": 1
+    },
+    {
+        "name": "show_viewer",
+        "description": "ビューワを表示するか否か",
+        "type": "Boolean",
+        "default": 1
+    },
+    {
+        "name": "selected_snippet",
+        "description": "最後に選択されたスニペット",
+        "type": "String"
+    }
+]

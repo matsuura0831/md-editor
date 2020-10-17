@@ -40,7 +40,7 @@
                 <li class="p-2 truncate rounded-lg"
                         :class="{'active': isOwnFile(file.path)}"
                         v-for="file in files" :key="file.id" :data-file="file.path" :data-title="file.title" :data-create="file.create_at"
-                        @click="changeFile(file.path)">
+                        @click="setFile(file.path)">
                     <span class="mr-1"><i class="far fa-file"></i></span> {{ file.title }}
                 </li>
             </ul>
@@ -131,7 +131,7 @@ export default {
                     let name = undefined, content = "";
                     if('snippet' in value && value.snippet != "") {
                         console.log('ReadSnippet', value.snippet);
-                        this.$store.commit('selectSnippet', value.snippet);
+                        this.$store.commit('setSelectedSnippet', value.snippet);
 
                         const snippet_fp = path.join(variables.DIR_NOTEBOOK, 'snippet', value.snippet);
                         const snippet = await fsPromises.readFile(snippet_fp, 'utf-8');
@@ -159,8 +159,8 @@ export default {
                     if(!fs.existsSync(dir)) fs.mkdirSync(dir);
                     fsPromises.writeFile(fp, content).then(() => {
                         this.update_markdown([fp]).then(d => {
-                            this.$store.commit('addFile', d[0]);
-                            this.changeFile(fp);
+                            this.$store.commit('addFiles', d[0]);
+                            this.setFile(fp);
                         });
                     });
                 }
@@ -196,7 +196,7 @@ export default {
                         fsPromises.rename(this.file, dst).then(() => {
                             return this.update_markdown([[this.file, dst]]);
                         }).then((docs) => {
-                            this.$store.commit('addFile', docs[0]);
+                            this.$store.commit('addFiles', docs[0]);
                             this.$store.commit('removeFileByPath', this.file);
                         });
                     }
@@ -206,8 +206,8 @@ export default {
         isOwnFile(f) {
             return f === this.file;
         },
-        changeFile(f) {
-            this.$store.commit('changeFile', f);
+        setFile(f) {
+            this.$store.commit('setFile', f);
         },
         search() {
             const text = document.querySelector('#nav-page input').value;
