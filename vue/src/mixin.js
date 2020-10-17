@@ -44,7 +44,8 @@ export default {
                 return new Promise((resolve, reject) => {
                     const [old_fp, new_fp] = Array.isArray(fp) ? fp : [fp, fp];
 
-                    fsPromises.readFile(new_fp, 'utf-8').then(async (content) => {
+                    (async() => {
+                        const content = await fsPromises.readFile(new_fp, 'utf-8')                        
                         const stats = await fsPromises.stat(new_fp);
 
                         const { data:fm, errors } = frontmatter(content);
@@ -53,7 +54,7 @@ export default {
                         const query = { path: old_fp };
                         const opt = { upsert: true }
 
-                        const create_at = (fm && fm.create_at) ? dayjs(fm.create_at) : dayjs();
+                        const create_at = fm.create_at ? dayjs(fm.create_at) : dayjs();
                         const update_at = dayjs(stats.mtime);
                         const file = path.basename(new_fp);
                         const name = file.split('.')[0];
@@ -72,8 +73,8 @@ export default {
 
                         db_update('markdown', query, data, opt).then(() => {
                             resolve(data);
-                        }).catch(reject);
-                    }).catch(() => {
+                        });
+                    })().catch((e) => {
                         db_remove('markdown', {path: old_fp}).then(resolve).catch(reject);
                     });
                 });
