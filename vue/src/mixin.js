@@ -43,9 +43,10 @@ export default {
             return Promise.all(files.map(fp => {
                 return new Promise((resolve, reject) => {
                     const [old_fp, new_fp] = Array.isArray(fp) ? fp : [fp, fp];
-                    console.log(old_fp, new_fp);
 
-                    fsPromises.readFile(new_fp, 'utf-8').then((content) => {
+                    fsPromises.readFile(new_fp, 'utf-8').then(async (content) => {
+                        const stats = await fsPromises.stat(new_fp);
+
                         const { data:fm, errors } = frontmatter(content);
                         if (errors.length > 0) reject(errors);
 
@@ -53,6 +54,7 @@ export default {
                         const opt = { upsert: true }
 
                         const create_at = (fm && fm.create_at) ? dayjs(fm.create_at) : dayjs();
+                        const update_at = dayjs(stats.mtime);
                         const file = path.basename(new_fp);
                         const name = file.split('.')[0];
                         const notebook = path.basename(path.dirname(new_fp));
@@ -64,6 +66,7 @@ export default {
                             notebook: notebook,
                             title: title,
                             create_at: create_at.format(),
+                            update_at: update_at.format(),
                             tags: fm.tags || [],
                         };
 
