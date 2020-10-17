@@ -4,6 +4,12 @@
             <div class="flex-auto">
                 <h1 class="font-semibold text-xl leading-tight mb-1 truncate">MD</h1>
             </div>
+
+            <div class="setting" @click="setting">
+                <router-link to="about">
+                    <i class="fas fa-tools"></i>
+                </router-link>
+            </div>
         </div>
 
         <div class="mb-4">

@@ -2,7 +2,6 @@
   "name": "mde",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/matsuura0831",
   "author": {
     "name": "Nobuhiko MATSUURA",
     "email": "matsuura0831@gmail.com"
@@ -38,12 +37,14 @@
     "tailwindcss": "^1.8.13",
     "vex-js": "^4.1.0",
     "vue": "^3.0.0",
+    "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0",
     "vuex-persistedstate": "^4.0.0-beta.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "^4.5.7",
     "@vue/cli-plugin-vuex": "^4.5.7",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
@@ -56,5 +57,6 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.4"
-  }
+  },
+  "homepage": "https://github.com/matsuura0831"
 }
