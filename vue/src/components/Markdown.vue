@@ -160,8 +160,9 @@ export default {
                 if(val) {
                     fsPromises.readFile(val, 'utf-8').then((content) => {
                         editor.session.setValue(content, 1);
-                    }).catch(() => {
-                        this.update_markdown([val]);
+                    }).catch(async () => {
+                        await this.update_markdown([val]);
+                        this.$store.commit('removeFileByPath', this.file);
                     });
                 } else {
                     if(editor) editor.session.setValue("", 1);
