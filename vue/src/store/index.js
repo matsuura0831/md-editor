@@ -13,6 +13,8 @@ export default createStore({
     isShowPage: true,
     isShowEditor: true,
     isShowViewer: true,
+
+    selected_snippet: '',
   },
   mutations: {
     setNotebooks(state, v) {
@@ -60,6 +62,10 @@ export default createStore({
     toggleViewer(state) {
       state.isShowViewer = ! state.isShowViewer;
     },
+
+    selectSnippet(state, v) {
+      state.selected_snippet = v;
+    }
   },
   actions: { },
   modules: { },

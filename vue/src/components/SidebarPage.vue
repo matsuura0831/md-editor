@@ -72,6 +72,9 @@ export default {
         file() {
             return this.$store.state.file;
         },
+        snippet() {
+            return this.$store.state.selected_snippet;
+        }
     },
     watch: {
         notebook_or_tag: function() {
@@ -98,7 +101,9 @@ export default {
         },
         pageAdd: async function() {
             const options = (await db_find('markdown', { notebook: 'snippet' })).map(d => {
-                return `<option>${d.file}</option>`;
+                console.log(d.file, this.snippet);
+                const opt = (d.file == this.snippet) ? " selected" : ""
+                return `<option${opt}>${d.file}</option>`;
             }).join("\n");
 
             this.vex.dialog.confirm({
@@ -114,7 +119,7 @@ export default {
                     <label for="snippet">Snippet</label>
                     <div class="vex-custom-input-wrapper">
                         <select name="snippet">
-                            <option selected></option>
+                            <option></option>
                             ${options}
                         </select>
                     </div>
@@ -126,23 +131,27 @@ export default {
                     let name = undefined, content = "";
                     if('snippet' in value && value.snippet != "") {
                         console.log('ReadSnippet', value.snippet);
+                        this.$store.commit('selectSnippet', value.snippet);
 
                         const snippet_fp = path.join(variables.DIR_NOTEBOOK, 'snippet', value.snippet);
                         const snippet = await fsPromises.readFile(snippet_fp, 'utf-8');
-                        const {permalink} = frontmatter(snippet).data;
-                        const now = this.dayjs();
 
-                        const parameters = {}
-                        this.format(permalink).forEach(e => {
-                            parameters[e] = now.format(e)
-                        });
+                        const parameters = {};
+                        if(snippet) {
+                            const now = this.dayjs();
+                            this.format(snippet).forEach(e => {
+                                parameters[e] = now.format(e)
+                            });
+                        }
                         parameters['title'] = value.title;
 
-                        name = this.format(permalink, parameters);
+                        const {permalink} = frontmatter(snippet).data;
+                        if(permalink) name = this.format(permalink, parameters);
+
                         content = this.format(snippet, parameters);
-                    } else {
-                        name = `${value.title}.md`
                     }
+
+                    if(name === undefined) name = `${value.title}.md`
 
                     const fp = path.join(variables.DIR_NOTEBOOK, this.notebook_or_tag.notebook, name);
                     const dir = path.dirname(fp);

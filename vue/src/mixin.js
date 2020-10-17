@@ -36,7 +36,8 @@ export default {
             if(dict) {
                 return fmt.replace(re, (m, key) => dict[key]);
             }
-            return fmt.match(re).map(e => e.slice(2, -1));
+            const g = fmt.match(re);
+            return g ? g.map(e => e.slice(2, -1)) : [];
         },
         update_markdown: function(files) {
             return Promise.all(files.map(fp => {
