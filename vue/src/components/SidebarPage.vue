@@ -170,7 +170,7 @@ export default {
             const name = path.basename(this.file);
 
             this.vex.dialog.confirm({
-                message: `ファイルを削除しますか? ${name}`,
+                message: `${name} を削除しますか?`,
                 callback: (value) => {
                     if(value) {
                         fsPromises.unlink(this.file).then(() => {
@@ -187,8 +187,8 @@ export default {
             const dir = path.dirname(this.file);
 
             this.vex.dialog.prompt({
-                message: `ファイル名を変更しますか? ${name}`,
-                placeholder: `${name}`,
+                message: `ファイル名を変更しますか?`,
+                value: `${name}`,
                 callback: (value) => {
                     if(value) {
                         const dst = path.join(dir, value);
