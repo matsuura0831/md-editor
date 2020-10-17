@@ -68,7 +68,7 @@ export default {
         db_init('markdown', 'user.neodb');
 
         this.readMarkdowns(variables.DIR_NOTEBOOK).then((files) => {
-            this.update_markdown(files);
+            return this.update_markdown(files);
         }).then(() => {
             db_find('markdown', {}, {path:1}).then((docs) => {
                 docs.filter(d => !fs.existsSync(d.path)).forEach(d => {
