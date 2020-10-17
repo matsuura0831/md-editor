@@ -62,5 +62,17 @@
         "name": "selected_snippet",
         "description": "最後に選択されたスニペット",
         "type": "String"
+    },
+    {
+        "name": "plantuml_server",
+        "description": "PLANTUMLサーバのURL",
+        "default": "http://www.plantuml.com/plantuml",
+        "type": "String"
+    },
+    {
+        "name": "diagrams_server",
+        "description": "DIAGRAMSサーバのURL",
+        "default": "https://embed.diagrams.net/?embed=1&ui=min&spin=1&proto=json&configure=1",
+        "type": "String"
     }
 ]

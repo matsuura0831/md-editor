@@ -47,7 +47,7 @@ function enableViewer(editor, viewer, change_func) {
     update();
 }
 
-function enableDrawio(editor, elm, url) {
+function enableDrawio(editor, elm, get_url) {
     elm.addEventListener('click', () => {
         //let r = editor.selection.getCursor().row;
         let r = editor.getCursorPosition().row;
@@ -169,7 +169,7 @@ function enableDrawio(editor, elm, url) {
             };
 
             window.addEventListener('message', receive);
-            iframe.setAttribute('src', url);
+            iframe.setAttribute('src', get_url());
             document.body.appendChild(iframe);
         }
     });

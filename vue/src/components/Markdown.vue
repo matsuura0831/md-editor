@@ -49,7 +49,6 @@ import 'ace-builds/src-min-noconflict/theme-monokai'
 
 import 'highlight.js/styles/atom-one-dark.css'
 
-import variables from '@/js/variables';
 import { enableViewer, enableDrawio} from '@/js/util-ace';
 
 export default {
@@ -68,7 +67,7 @@ export default {
                     typographer: false,
                 }) 
                 .use(require('markdown-it-plantuml'), {
-                    server: variables.PLANTUML_SERVER,
+                    server: this.plantuml_server
                 })
                 .use(require('markdown-it-abbr'))
                 .use(require('markdown-it-ins'))
@@ -119,7 +118,7 @@ export default {
             }
             return "";
         });
-        enableDrawio(this.editor, document.querySelector('#invoke-drawio'), variables.DIAGRAMS_SERVER);
+        enableDrawio(this.editor, document.querySelector('#invoke-drawio'), () => this.diagrams_server);
 
         if(!this.isShowEditor) {
             document.querySelector('#editor').classList.add('hidden');
@@ -140,6 +139,12 @@ export default {
         },
         isShowViewer() {
             return this.$store.state.show_viewer;
+        },
+        diagrams_server() {
+            return this.$store.state.diagrams_server;
+        },
+        plantuml_server() {
+            return this.$store.state.plantuml_server;
         },
         enable_frontmatter() {
             return this.frontmatter_init;
