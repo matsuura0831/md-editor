@@ -11,7 +11,7 @@ const fsPromises = fs.promises;
 import variables from '@/js/variables';
 import { readMarkdowns } from '@/js/util';
 import { db_init, db_find, db_remove } from '@/js/util-db';
-import { getS3Client, syncFiles } from '@/js/util-aws';
+import { getS3Client, syncObjects } from '@/js/util-aws';
 
 import Editor from '../components/Editor.vue';
 
@@ -55,7 +55,7 @@ export default {
                 this.$store.state.aws_secret_access_key,
             );
 
-            await syncFiles(client, variables.DIR_NOTEBOOK, this.$store.state.aws_bucket)
+            await syncObjects(client, variables.DIR_NOTEBOOK, this.$store.state.aws_bucket)
 
             // search markdown on loacal
             const files = await readMarkdowns(variables.DIR_NOTEBOOK);

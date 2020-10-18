@@ -204,23 +204,25 @@ export default {
 
                 const v = this.editor.getValue();
                 const { permalink } = frontmatter(v).data;
-                const fp = path.join(path.dirname(crnt), permalink);
 
-                const promises = [fsPromises.writeFile(fp, v)];
-                if(fp != crnt) {
-                    promises.push(fsPromises.unlink(crnt));
+                let next = crnt;
+                if(permalink) {
+                    next = path.join(path.dirname(crnt), permalink);
                 }
+                
+                const promises = [fsPromises.writeFile(next, v)];
+                if(next != crnt) promises.push(fsPromises.unlink(crnt));
                 await Promise.all(promises);
 
-                const docs = await this.update_markdown({old: crnt, new: fp});
+                const docs = await this.update_markdown({old: crnt, new: next});
                 const { data } = docs[0];
 
                 this.$store.commit('addTags', data.tags);
 
-                if(fp != crnt) {
+                if(next != crnt) {
                     this.$store.commit('addFiles', data);
                     this.$store.commit('removeFileByPath', crnt);
-                    this.$store.commit('setFile', fp);
+                    this.$store.commit('setFile', next);
                 }
 
             }

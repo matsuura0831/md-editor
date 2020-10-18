@@ -32,7 +32,11 @@ function listS3Objects(client, params) {
     return _list(client, params, []);
 }
 
-function syncFiles(client, local_dir, s3_bucket, s3_prefix) {
+function removeObject(client, s3_bucket, s3_key) {
+    return client.deleteObject({ Bucket: s3_bucket, Key: s3_key }).promise();
+}
+
+function syncObjects(client, local_dir, s3_bucket, s3_prefix) {
     const params = { Bucket: s3_bucket, Prefix: s3_prefix };
 
     const process = [
@@ -124,4 +128,4 @@ function syncFiles(client, local_dir, s3_bucket, s3_prefix) {
     });
 }
 
-export { getS3Client, listS3Objects, syncFiles }
+export { getS3Client, listS3Objects, syncObjects, removeObject}

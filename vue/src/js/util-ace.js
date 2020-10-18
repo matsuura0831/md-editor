@@ -8,7 +8,6 @@ function enableViewer(editor, viewer, change_func) {
             for(let r of rows) {
                 const e = document.querySelector(`[data-line="${r}"]`);
                 if(e) {
-                    console.log('Scroll to', r, rows, e);
                     e.scrollIntoView(true)
                     break
                 }
