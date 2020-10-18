@@ -215,9 +215,7 @@ export default {
                 const docs = await this.update_markdown({old: crnt, new: fp});
                 const { data } = docs[0];
 
-                data.tags.forEach(e => {
-                    this.$store.commit('addTags', e);
-                });
+                this.$store.commit('addTags', data.tags);
 
                 if(fp != crnt) {
                     this.$store.commit('addFiles', data);

@@ -16,15 +16,31 @@ const FUNCTION_FACTORY = {
         m[`get${camel_name}`] = (state) => { return state[name] };
     },
     'array': (m, name, camel_name, opt) => {
-        if ('first' in opt && opt.first) {
-            m[`add${camel_name}`] = (state, v) => { state[name] = [v, ...state[name]] }
+        if (opt.first) {
+            m[`add${camel_name}`] = (state, v) => {
+                if(Array.isArray(v)) {
+                    state[name] = [...v, ...state[name]]
+                } else {
+                    state[name] = [v, ...state[name]]
+                }
+            }
         } else {
-            m[`add${camel_name}`] = (state, v) => { state[name] = [...state[name], v] }
+            m[`add${camel_name}`] = (state, v) => {
+                if(Array.isArray(v)) {
+                    state[name] = [...state[name], ...v]
+                } else {
+                    state[name] = [...state[name], v]
+                }
+            }
         }
 
-        if ('drop_duplicate' in opt && opt.drop_duplicate) {
+        if (opt.drop_duplicate) {
             const org = m[`add${camel_name}`];
-            m[`add${camel_name}`] = (state, v) => { state[name] = [...new Set(org(state, v))] }
+
+            m[`add${camel_name}`] = (state, v) => {
+                org(state, v);
+                state[name] = [...new Set(state[name])];
+            };
         }
     },
     'boolean': (m, name, camel_name/*, opt*/) => {
@@ -35,7 +51,7 @@ const FUNCTION_FACTORY = {
 const state = {}, mutations = {};
 
 store.map(e => {
-    const { name, default: d, type = 'string', opt } = e;
+    const { name, default: d, type = 'string', opt = {} } = e;
     const lower_type = type.toLowerCase();
     const camel_name = toCamelCase(name);
 
