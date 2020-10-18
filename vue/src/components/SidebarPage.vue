@@ -35,14 +35,12 @@
                 </form>
             </div>
 
-
             <ul id="list-page" class="page-list py-2 px-3 text-sm">
                 <li class="p-2 truncate rounded-lg"
-                        :class="{'active': isOwnFile(file.path)}"
-                        v-for="file in files" :key="file.id" :data-file="file.path" :data-title="file.title" :data-create="file.create_at"
-                        @click="setFile(file.path)">
+                        v-for="file in documents" :key="file.id" :data-file="file.path" :data-title="file.title" :data-create="file.create_at"
+                        :class="{'active': isOwnFile(file.path)}" @click="setFile(file.path)">
                     <span class="mr-1"><i class="far fa-file"></i></span> {{ file.title }}
-                </li>
+                </li> 
             </ul>
         </div>
     </div>
@@ -59,6 +57,11 @@ import { db_find } from '@/js/util-db';
 import variables from '@/js/variables';
 
 export default {
+    data() {
+        return {
+            documents: [],
+        }
+    },
     computed: {
         files() {
             return this.$store.state.files;
@@ -77,31 +80,38 @@ export default {
         }
     },
     watch: {
-        notebook_or_tag() {
-            if(this.notebook_or_tag.notebook) {
-                this.refleshPagesByNotebook();
-            }
-            if(this.notebook_or_tag.tag) {
-                this.refleshPagesByTag();
+        notebook_or_tag: {
+            immediate: true,
+            handler() {
+                if(this.notebook_or_tag.notebook) {
+                    const query = { notebook: this.notebook_or_tag.notebook };
+                    db_find('markdown', query).then(docs => {
+                        this.$store.commit('setFiles', docs.map(d => d.path));
+                    });
+                }
+                if(this.notebook_or_tag.tag) {
+                    const query = { tags: { $elemMatch: this.notebook_or_tag.tag }};
+                    db_find('markdown', query).then(docs => {
+                        this.$store.commit('setFiles', docs.map(d => d.path));
+                    });
+                }
             }
         },
+        files: {
+            immediate: true,
+            handler(val) {
+                const query = val.map(v => {
+                    return { path: v };
+                });
+                db_find('markdown', { $or: query }, {}, {create_at: -1}).then(docs => {
+                    this.documents = docs;
+                });
+            }
+        }
     },
     methods: {
-        refleshPagesByNotebook() {
-            const query = { notebook: this.notebook_or_tag.notebook };
-            db_find('markdown', query, {}, {create_at: -1}).then(docs => {
-                this.$store.commit('setFiles', docs);
-            });
-        },
-        refleshPagesByTag() {
-            const query = { tags: { $elemMatch: this.notebook_or_tag.tag }};
-            db_find('markdown', query, {}, {create_at: -1}).then(docs => {
-                this.$store.commit('setFiles', docs);
-            });
-        },
         async pageAdd() {
             const options = (await db_find('markdown', { notebook: 'snippet' })).map(d => {
-                console.log(d.file, this.snippet);
                 const opt = (d.file == this.snippet) ? " selected" : ""
                 return `<option${opt}>${d.file}</option>`;
             }).join("\n");
@@ -130,7 +140,6 @@ export default {
 
                     let name = undefined, content = "";
                     if('snippet' in value && value.snippet != "") {
-                        console.log('ReadSnippet', value.snippet);
                         this.$store.commit('setSelectedSnippet', value.snippet);
 
                         const snippet_fp = path.join(variables.DIR_NOTEBOOK, 'snippet', value.snippet);
@@ -159,11 +168,7 @@ export default {
                     if(!fs.existsSync(dir)) fs.mkdirSync(dir);
                     await fsPromises.writeFile(fp, content);
 
-                    const docs = await this.update_markdown(fp);
-                    const { data } = docs[0];
-
-                    this.$store.commit('addFiles', data);
-                    this.setFile(fp);
+                    await this.update_markdown(fp);
                 }
             });
         },
@@ -172,12 +177,12 @@ export default {
 
             this.vex.dialog.confirm({
                 message: `${name} を削除しますか?`,
-                callback: async (value) => {
+                callback: (value) => {
                     if(value) {
-                        await fsPromises.unlink(this.file);
-                        await this.update_markdown(this.file);
-                        this.$store.commit('removeFileByPath', this.file);
-                        this.$store.commit('setFile', undefined);
+                        (async() => {
+                            await fsPromises.unlink(this.file);
+                            await this.update_markdown(this.file);
+                        })();
                     }
                 }
             });
@@ -194,12 +199,7 @@ export default {
                         const dst = path.join(dir, value);
 
                         await fsPromises.rename(this.file, dst);
-                        const docs = await this.update_markdown({old: this.file, new: dst});
-                        const { data } = docs[0];
-
-                        this.$store.commit('addFiles', data);
-                        this.$store.commit('removeFileByPath', this.file);
-                        this.$store.commit('setFile', dst);
+                        await this.update_markdown({old: this.file, new: dst});
                     }
                 }
             });

@@ -39,47 +39,53 @@ export default {
             const g = fmt.match(re);
             return g ? g.map(e => e.slice(2, -1)) : [];
         },
-        update_markdown: function(files) {
-            if(!Array.isArray(files)) files = [files];
+        update_markdown: function(fp, notify_file=true) {
+            const d = (typeof fp === 'object') ? fp: { 'old': fp, 'new': fp };
 
-            return Promise.all(files.map(fp => {
-                return new Promise((resolve, reject) => {
-                    const d = (typeof fp === 'object') ? fp: { 'old': fp, 'new': fp };
+            return new Promise((resolve, reject) => {
+                (async() => {
+                    const stats = await fsPromises.stat(d.new);
 
-                    (async() => {
-                        const stats = await fsPromises.stat(d.new);
+                    const content = await fsPromises.readFile(d.new, 'utf-8')                        
+                    const { data:fm } = frontmatter(content);
 
-                        const content = await fsPromises.readFile(d.new, 'utf-8')                        
-                        const { data:fm } = frontmatter(content);
+                    const query = { path: d.old };
+                    const opt = { upsert: true }
 
-                        const query = { path: d.old };
-                        const opt = { upsert: true }
+                    const create_at = fm.create_at ? dayjs(fm.create_at) : dayjs();
+                    const update_at = dayjs(stats.mtime);
+                    const file = path.basename(d.new);
+                    const name = file.split('.')[0];
+                    const notebook = path.basename(path.dirname(d.new));
+                    const title = notebook == "snippet" ? name : fm.title || name;
 
-                        const create_at = fm.create_at ? dayjs(fm.create_at) : dayjs();
-                        const update_at = dayjs(stats.mtime);
-                        const file = path.basename(d.new);
-                        const name = file.split('.')[0];
-                        const notebook = path.basename(path.dirname(d.new));
-                        const title = notebook == "snippet" ? name : fm.title || name;
+                    const data = {
+                        path: d.new,
+                        file: file,
+                        notebook: notebook,
+                        title: title,
+                        create_at: create_at.format(),
+                        update_at: update_at.format(),
+                        tags: fm.tags || [],
+                    };
 
-                        const data = {
-                            path: d.new,
-                            file: file,
-                            notebook: notebook,
-                            title: title,
-                            create_at: create_at.format(),
-                            update_at: update_at.format(),
-                            tags: fm.tags || [],
-                        };
+                    await db_update('markdown', query, data, opt)
+                    this.$store.commit('addNotebooks', data.notebook);
+                    this.$store.commit('addTags', data.tags);
 
-                        db_update('markdown', query, data, opt).then(() => {
-                            resolve({data: data, frontmatter: fm});
-                        });
-                    })().catch(() => {
-                        db_remove('markdown', {path: d.old}).then(resolve).catch(reject);
-                    });
+                    if(d.old != d.new) this.$store.commit('removeFiles', d.old);
+                    if(notify_file) {
+                        this.$store.commit('addFiles', d.new);
+                        this.$store.commit('setFile', d.new);
+                    }
+
+                    resolve({data: data, frontmatter: fm});
+                })().catch(() => {
+                    this.$store.commit('removeFiles', d.old);
+                    this.$store.commit('setFile', undefined);
+                    db_remove('markdown', {path: d.old}).then(resolve).catch(reject);
                 });
-            }));
+            });
         }
     }
 }

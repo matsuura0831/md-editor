@@ -104,23 +104,23 @@ function syncObjects(client, local_dir, s3_bucket, s3_prefix) {
                         Bucket: s3_bucket,
                         Key: d.s3_path
                     }).promise().then(data => {
-                        console.log('DL', d.s3_path, d.local_path, data);
-
                         return fsPromises.writeFile(d.local_path, data.Body);
-                    }).then(resolve).catch(reject);
+                    }).then(() => {
+                        resolve({ isDownload: true, document: d });
+                    }).catch(reject);
                 });
             }),
             ...upload_docs.map(d => {
                 return new Promise((resolve, reject) => {
                     fsPromises.readFile(d.local_path, 'utf-8').then(data => {
-                        console.log('UP', d.local_path, d.s3_path, data);
-
                         return client.putObject({
                             Body: data,
                             Bucket: s3_bucket,
                             Key: d.s3_path
                         }).promise();
-                    }).then(resolve).catch(reject);
+                    }).then(() => {
+                        resolve({ isDownload: false, document: d });
+                    }).catch(reject);
                 });
             })
         ];

@@ -171,8 +171,6 @@ export default {
                         this.editor.session.setValue(content, 1);
                     }).catch(async () => {
                         await this.update_markdown(val);
-                        this.$store.commit('removeFileByPath', val);
-                        this.$store.commit('setFile', undefined);
                     });
                 } else {
                     if(this.editor) this.editor.session.setValue("", 1);
@@ -204,27 +202,13 @@ export default {
 
                 const v = this.editor.getValue();
                 const { permalink } = frontmatter(v).data;
-
-                let next = crnt;
-                if(permalink) {
-                    next = path.join(path.dirname(crnt), permalink);
-                }
+                const next = permalink ? path.join(path.dirname(crnt), permalink) : crnt;
                 
                 const promises = [fsPromises.writeFile(next, v)];
                 if(next != crnt) promises.push(fsPromises.unlink(crnt));
                 await Promise.all(promises);
 
-                const docs = await this.update_markdown({old: crnt, new: next});
-                const { data } = docs[0];
-
-                this.$store.commit('addTags', data.tags);
-
-                if(next != crnt) {
-                    this.$store.commit('addFiles', data);
-                    this.$store.commit('removeFileByPath', crnt);
-                    this.$store.commit('setFile', next);
-                }
-
+                await this.update_markdown({old: crnt, new: next});
             }
         },
         toggle(v) {

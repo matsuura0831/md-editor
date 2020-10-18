@@ -10,7 +10,7 @@ const fsPromises = fs.promises;
 
 import variables from '@/js/variables';
 import { readMarkdowns } from '@/js/util';
-import { db_init, db_find, db_remove } from '@/js/util-db';
+import { db_init } from '@/js/util-db';
 import { getS3Client, syncObjects } from '@/js/util-aws';
 
 import Editor from '../components/Editor.vue';
@@ -55,26 +55,12 @@ export default {
                 this.$store.state.aws_secret_access_key,
             );
 
-            await syncObjects(client, variables.DIR_NOTEBOOK, this.$store.state.aws_bucket)
+            const ret = await syncObjects(client, variables.DIR_NOTEBOOK, this.$store.state.aws_bucket)
+            console.log(ret);
 
             // search markdown on loacal
             const files = await readMarkdowns(variables.DIR_NOTEBOOK);
-            await this.update_markdown(files);
-
-            const notebooks = ['general', 'snippet'], tags = [];
-
-            (await db_find('markdown', {})).forEach(d => {
-                if(!fs.existsSync(d.path)) {
-                    // remove unlinked files
-                    db_remove('markdown', d)
-                    return;
-                }
-                notebooks.push(d.notebook);
-                tags.push(...d.tags);
-            });
-            // apply UI
-            this.$store.commit('setNotebooks', [...new Set(notebooks)]);
-            this.$store.commit('setTags', [...new Set(tags)]);
+            await Promise.all(files.map(f => this.update_markdown(f, false)));
         })();
     }
 }

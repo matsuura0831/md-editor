@@ -3,6 +3,7 @@
         "name": "notebooks",
         "description": "使用中のノートブックのリスト",
         "type": "Array",
+        "default": ["general", "snippet"],
         "opt": {
             "drop_duplicate": 1
         }

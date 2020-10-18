@@ -4,6 +4,8 @@ import { toCamelCase } from "../js/util"
 
 import store from "@/assets/store.json";
 
+const DEBUG = true;
+
 const VALUE_FACTORY = {
     'array': (d) => Array.isArray(d) ? [...d] : [],
     'object': (d) => (d !== null && typeof d === 'object') ? { ...d } : {},
@@ -33,7 +35,6 @@ const FUNCTION_FACTORY = {
                 }
             }
         }
-
         if (opt.drop_duplicate) {
             const org = m[`add${camel_name}`];
 
@@ -41,6 +42,12 @@ const FUNCTION_FACTORY = {
                 org(state, v);
                 state[name] = [...new Set(state[name])];
             };
+        }
+
+        m[`remove${camel_name}`] = (state, v) => {
+            const old = state[name];
+            state[name] = state[name].filter(i => i != v);
+            console.log("REMOVE", camel_name, old, state[name]);
         }
     },
     'boolean': (m, name, camel_name/*, opt*/) => {
@@ -66,7 +73,17 @@ store.map(e => {
 // additional mutations
 mutations['changeNotebook'] = (state, v) => { state.notebook_or_tag = { notebook: v, tag: undefined } };
 mutations['changeTag'] = (state, v) => { state.notebook_or_tag = { notebook: undefined, tag: v } };
-mutations['removeFileByPath'] = (state, v) => { state.files = state.files.filter(d => d.path != v) };
+
+if(DEBUG) {
+    Object.keys(mutations).forEach(k => {
+        const f = mutations[k];
+
+        mutations[k] = function() {
+            console.log(`mutation[${k}]`, [...arguments].slice(1));
+            f(...arguments);
+        }
+    })
+}
 
 export default createStore({
     state: state,
