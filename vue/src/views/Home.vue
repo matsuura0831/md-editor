@@ -55,7 +55,7 @@ export default {
                 this.$store.state.aws_secret_access_key,
             );
 
-            const ret = await syncFiles(client, variables.DIR_NOTEBOOK, this.$store.state.aws_bucket)
+            await syncFiles(client, variables.DIR_NOTEBOOK, this.$store.state.aws_bucket)
 
             // search markdown on loacal
             const files = await readMarkdowns(variables.DIR_NOTEBOOK);
