@@ -54,7 +54,6 @@ const fsPromises = fs.promises;
 import frontmatter from '@github-docs/frontmatter';
 
 import { db_find } from '@/js/util-db';
-import variables from '@/js/variables';
 
 export default {
     data() {
@@ -142,7 +141,7 @@ export default {
                     if('snippet' in value && value.snippet != "") {
                         this.$store.commit('setSelectedSnippet', value.snippet);
 
-                        const snippet_fp = path.join(variables.DIR_NOTEBOOK, 'snippet', value.snippet);
+                        const snippet_fp = path.join(this.DIR_NOTEBOOK, 'snippet', value.snippet);
                         const snippet = await fsPromises.readFile(snippet_fp, 'utf-8');
 
                         const parameters = {};
@@ -162,7 +161,7 @@ export default {
 
                     if(name === undefined) name = `${value.title}.md`
 
-                    const fp = path.join(variables.DIR_NOTEBOOK, this.notebook_or_tag.notebook, name);
+                    const fp = path.join(this.DIR_NOTEBOOK, this.notebook_or_tag.notebook, name);
                     const dir = path.dirname(fp);
 
                     if(!fs.existsSync(dir)) fs.mkdirSync(dir);

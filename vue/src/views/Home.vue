@@ -8,10 +8,9 @@ import path from 'path';
 import fs from 'fs';
 const fsPromises = fs.promises;
 
-import variables from '@/js/variables';
 import { readMarkdowns } from '@/js/util';
 import { db_init } from '@/js/util-db';
-import { getS3Client, syncObjects } from '@/js/util-aws';
+import { syncObjects } from '@/js/util-aws';
 
 import Editor from '../components/Editor.vue';
 
@@ -24,7 +23,7 @@ export default {
         Editor
     },
     created() {
-        const created = [variables.DIR_HOME, variables.DIR_NOTEBOOK].map(d => {
+        const created = [this.DIR_HOME, this.DIR_NOTEBOOK].map(d => {
             if(!fs.existsSync(d)) {
                 fs.mkdirSync(d);
                 return true;
@@ -33,7 +32,7 @@ export default {
         });
         if(created[1]) {
             const [fp_gen, fp_sni] = ['general', 'snippet'].map(e => {
-                const d = path.join(variables.DIR_NOTEBOOK, e);
+                const d = path.join(this.DIR_NOTEBOOK, e);
                 if(!fs.existsSync(d)) fs.mkdirSync(d);
                 return path.join(d, 'default.md');
             });
@@ -48,20 +47,20 @@ export default {
 
         db_init('markdown', 'user.neodb');
 
-        (async () => {
-            const client = getS3Client(
-                this.$store.state.aws_region,
-                this.$store.state.aws_access_key_id,
-                this.$store.state.aws_secret_access_key,
-            );
-
-            const ret = await syncObjects(client, variables.DIR_NOTEBOOK, this.$store.state.aws_bucket)
-            console.log(ret);
+        const init = async() => {
+            if(this.enable_s3_sync) {
+                const client = this.s3_client;
+                const ret = await syncObjects(client, this.DIR_NOTEBOOK, this.s3_bucket);
+                console.log(ret);
+            }
 
             // search markdown on loacal
-            const files = await readMarkdowns(variables.DIR_NOTEBOOK);
+            const files = await readMarkdowns(this.DIR_NOTEBOOK);
             await Promise.all(files.map(f => this.update_markdown(f, false)));
-        })();
+        }
+
+        init();
+        setInterval(init, 5 * 60 * 1000);
     }
 }
 </script>
