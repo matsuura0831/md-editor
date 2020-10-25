@@ -7,7 +7,7 @@ on:
 jobs:
   create-release:
     runs-on: ubuntu-latest
-    if: github.base_ref == 'refs/heads/master'
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
     steps:
       - uses: actions/checkout@v2
       - run: cp ./package.json ./package-lock.json .github/actions/build
