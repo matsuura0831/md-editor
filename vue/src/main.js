@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import App from './views/Home.vue'
+import App from './views/App.vue'
 
 import '@/assets/tailwind.scss'
 import '@fortawesome/fontawesome-free/js/fontawesome';
