@@ -25,7 +25,7 @@ jobs:
               + ':' + String(merged_at.getMinutes()).padStart(2, '0')
               + ':' + String(merged_at.getSeconds()).padStart(2, '0');
 
-            github.repos.createRelease({
+            return await github.repos.createRelease({
               ...context.repo,
               draft: true,
               tag_name: tag_name,
