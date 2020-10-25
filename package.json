@@ -1,0 +1,62 @@
+{
+  "name": "mde",
+  "version": "0.2.0",
+  "private": true,
+  "author": {
+    "name": "Nobuhiko MATSUURA",
+    "email": "matsuura0831@gmail.com"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps"
+  },
+  "main": "background.js",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.1",
+    "@github-docs/frontmatter": "^1.3.1",
+    "ace-builds": "^1.4.12",
+    "aws-sdk": "^2.773.0",
+    "core-js": "^3.6.5",
+    "dayjs": "^1.9.1",
+    "highlight.js": "^10.2.1",
+    "markdown-it": "^11.0.1",
+    "markdown-it-abbr": "^1.0.4",
+    "markdown-it-container": "^3.0.0",
+    "markdown-it-emoji": "^1.4.0",
+    "markdown-it-footnote": "^3.0.2",
+    "markdown-it-ins": "^3.0.0",
+    "markdown-it-mark": "^3.0.0",
+    "markdown-it-plantuml": "^1.4.1",
+    "markdown-it-sub": "^1.0.0",
+    "markdown-it-sup": "^1.0.0",
+    "nedb": "^1.8.0",
+    "tailwindcss": "^1.8.13",
+    "vex-js": "^4.1.0",
+    "vue": "^3.0.0",
+    "vuex": "^4.0.0-0",
+    "vuex-persistedstate": "^4.0.0-beta.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "^4.5.7",
+    "@vue/cli-plugin-vuex": "^4.5.7",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "babel-eslint": "^10.1.0",
+    "electron": "^9.0.0",
+    "electron-devtools-installer": "^3.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^7.0.0-0",
+    "raw-loader": "^4.0.2",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.4"
+  },
+  "homepage": "https://github.com/matsuura0831"
+}

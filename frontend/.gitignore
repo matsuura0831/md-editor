@@ -1,6 +1,0 @@
-dist/
-build/
-node_modules/
-.devcontainer/
-package-lock.json
-mock/
