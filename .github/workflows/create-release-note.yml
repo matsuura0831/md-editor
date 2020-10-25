@@ -8,6 +8,10 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - run: cp ./package.json ./package-lock.json .github/actions/build
+      - uses: ./.github/actions/build
+
       - uses: actions/github-script@v3
         id: create_release
         env:
@@ -16,6 +20,8 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const fs = require('fs').promises;
+
             const pr = context.payload.pull_request
             if (!(pr.merged && pr.base.ref === process.env.PRODUCTION_BRANCH)) return;
 
@@ -27,7 +33,7 @@ jobs:
               + ':' + String(merged_at.getMinutes()).padStart(2, '0')
               + ':' + String(merged_at.getSeconds()).padStart(2, '0');
 
-            return await github.repos.createRelease({
+            const release = await github.repos.createRelease({
               ...context.repo,
               draft: true,
               tag_name: tag_name,
@@ -36,13 +42,14 @@ jobs:
               body: pr.body
             });
 
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./README.md
-          asset_name: README.md
-          asset_content_type: text/plain
+            for (let file of await fs.readdir('.')) {
+              if(!file.endsWith('.exe') || !file.endsWith('.deb')) continue;
+
+              console.log('uploading', file);
+              await github.repos.uploadReleaseAsset({
+                ...context.repo,
+                release_id: release.data.id,
+                name: file,
+                data: await fs.readFile(`./${file}`)
+              });            
+            }
