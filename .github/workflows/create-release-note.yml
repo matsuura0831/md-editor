@@ -23,6 +23,7 @@ jobs:
             const fs = require('fs').promises;
 
             const pr = context.payload.pull_request
+            console.log(pr.merged, pr.base.ref, process.env.PRODUCTION_BRANCH, pr.base.ref === process.env.PRODUCTION_BRANCH);
             console.log(pr);
             if (!(pr.merged && pr.base.ref === process.env.PRODUCTION_BRANCH)) return;
 
