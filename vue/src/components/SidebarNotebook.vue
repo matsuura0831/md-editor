@@ -5,10 +5,8 @@
                 <h1 class="font-semibold text-xl leading-tight mb-1 truncate">MD</h1>
             </div>
 
-            <div class="setting">
-                <router-link to="about">
-                    <i class="fas fa-tools"></i>
-                </router-link>
+            <div class="setting" @click="toggleHome">
+                <i class="fas fa-tools"></i>
             </div>
         </div>
 
@@ -64,6 +62,9 @@ export default {
         },
     },
     methods: {
+        toggleHome(v) {
+            this.$store.commit('toggleShowHome', v);
+        },
         resetHighlight() {
             ['#list-tag li', '#list-notebook li'].forEach(q => {
                 [...document.querySelectorAll(q)].forEach(e => {

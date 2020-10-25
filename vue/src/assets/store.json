@@ -1,5 +1,11 @@
 [
     {
+        "name": "show_home",
+        "description": "Home画面を表示するか",
+        "type": "Boolean",
+        "default": 1
+    },
+    {
         "name": "notebooks",
         "description": "使用中のノートブックのリスト",
         "type": "Array",

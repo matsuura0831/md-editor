@@ -245,8 +245,8 @@
         @apply list-decimal;
     }
 
-    li p:last-child {
-        @apply m-0;
+    li p {
+        @apply m-1;
     }
 
     dd {

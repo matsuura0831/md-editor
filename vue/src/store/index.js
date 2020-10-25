@@ -50,7 +50,7 @@ const FUNCTION_FACTORY = {
             console.log("REMOVE", camel_name, old, state[name]);
         }
     },
-    'boolean': (m, name, camel_name/*, opt*/) => {
+    'boolean': (m, name, camel_name) => {
         m[`toggle${camel_name}`] = (state) => { state[name] = !state[name] };
     }
 };

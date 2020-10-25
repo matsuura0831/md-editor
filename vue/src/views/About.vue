@@ -7,8 +7,8 @@
             <div class="mt-6" id="setting"></div>
 
             <div class="flex justify-center">
-                <div class="p-4 rounded-md border border-gray-400">
-                    <router-link to="/">HOME</router-link>
+                <div class="p-4 rounded-md border border-gray-400" @click="toggleHome">
+                    HOME
                 </div>
             </div>
         </div>
@@ -31,6 +31,11 @@ import store from "@/assets/store.json";
 export default {
     computed: {
         ...mapState(store.map(e => e.name)),
+    },
+    methods: {
+        toggleHome(v) {
+            this.$store.commit('toggleShowHome', v);
+        },
     },
     mounted() {
         store.filter(e => e.opt && e.opt.setting).forEach(e => {

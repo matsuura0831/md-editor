@@ -105,7 +105,7 @@ export default {
                     this.$store.commit('removeFiles', d.old);
                     this.$store.commit('setFile', undefined);
 
-                    const [notebook, file] = d.old.split('/').slice(-2);
+                    const [notebook, file] = d.old.split(path.sep).slice(-2);
                     const s3_key = `notebook/${notebook}/${file}`;
                     console.log("delete", s3_key);
 

@@ -55,7 +55,7 @@ function syncObjects(client, local_dir, s3_bucket, s3_prefix) {
         const merged = {};
 
         s3_docs.forEach(({Key, LastModified}) => {
-            const [notebook, file] = Key.split('/').slice(-2);
+            const [notebook, file] = Key.split(path.sep).slice(-2);
             const k = `${notebook}/${file}`
 
             if(!(k in merged)) {
@@ -63,14 +63,14 @@ function syncObjects(client, local_dir, s3_bucket, s3_prefix) {
             }
             merged[k] = {...merged[k], s3_path: Key, s3_update_at: dayjs(LastModified) }
         });
-        docs.forEach(({path, stats}) => {
-            const [notebook, file] = path.split('/').slice(-2);
+        docs.forEach(({path:p, stats}) => {
+            const [notebook, file] = p.split(path.sep).slice(-2);
 
             const k = `${notebook}/${file}`
             if(!(k in merged)) {
                 merged[k] = {};
             }
-            merged[k] = {...merged[k], local_path: path, local_update_at: dayjs(stats.mtime) }
+            merged[k] = {...merged[k], local_path: p, local_update_at: dayjs(stats.mtime) }
         });
         return merged;
 

@@ -1,5 +1,8 @@
 <template>
-    <Editor/>
+    <div>
+        <Editor v-if="isShowHome"/>
+        <About v-if="!isShowHome"/>
+    </div>
 </template>
 
 <script>
@@ -13,14 +16,21 @@ import { db_init } from '@/js/util-db';
 import { syncObjects } from '@/js/util-aws';
 
 import Editor from '../components/Editor.vue';
+import About from '../views/About.vue';
 
 import tutorial from "raw-loader!@/assets/md/tutorial.md";
 import snippet from "raw-loader!@/assets/md/snippet.md";
 
 export default {
     name: 'App',
-        components: {
-        Editor
+    components: {
+        Editor,
+        About,
+    },
+    computed: {
+        isShowHome() {
+            return this.$store.state.show_home;
+        },
     },
     created() {
         const created = [this.DIR_HOME, this.DIR_NOTEBOOK].map(d => {
