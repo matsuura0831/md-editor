@@ -20,9 +20,12 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            console.log("START");
             const fs = require('fs').promises;
 
             const pr = context.payload.pull_request
+            console.log(pr);
+            console.log(process.env.PRODUCTION_BRANCH);
             if (!(pr.merged && pr.base.ref === process.env.PRODUCTION_BRANCH)) return;
 
             const merged_at = new Date(pr.merged_at);
