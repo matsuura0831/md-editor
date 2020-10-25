@@ -7,7 +7,7 @@ on:
 jobs:
   create-release:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.base_ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v2
       - run: cp ./package.json ./package-lock.json .github/actions/build
@@ -36,7 +36,7 @@ jobs:
 
             const release = await github.repos.createRelease({
               ...context.repo,
-              draft: true,
+              draft: false,
               tag_name: tag_name,
               name: tag_name,
               target_commitish: process.env.GITHUB_SHA,
