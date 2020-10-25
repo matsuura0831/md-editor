@@ -18,10 +18,12 @@ jobs:
         env:
           PRODUCTION_BRANCH: master
           TZ: Asia/Tokyo
+          TARGET_DIR: dist_electron
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const fs = require('fs').promises;
+            const path = require('path');
 
             const pr = context.payload.pull_request
             if (!(pr.merged && pr.base.ref === process.env.PRODUCTION_BRANCH)) return;
@@ -43,7 +45,7 @@ jobs:
               body: pr.body
             });
 
-            for (let file of await fs.readdir('dist_electron')) {
+            for (let file of await fs.readdir(process.env.TARGET_DIR)) {
               if(!file.endsWith('.exe') && !file.endsWith('.deb')) continue;
 
               console.log('uploading', file);
@@ -51,6 +53,6 @@ jobs:
                 ...context.repo,
                 release_id: release.data.id,
                 name: file,
-                data: await fs.readFile(`./${file}`)
+                data: await fs.readFile(path.join(process.env.TARGET_DIR, file))
               });            
             }
