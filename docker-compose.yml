@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: ./docker/
+    volumes:
+      - ".:/workspace"
+      - "~/.gitconfig:/root/.gitconfig:rw"
+      - "~/.ssh/github_private_id_rsa:/root/.ssh/id_rsa:rw"
+    working_dir: "/workspace"
+    ports:
+      - "8080:8080"
