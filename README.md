@@ -2,6 +2,7 @@
 
 dummy_test1
 dummy_test2
+dummy_test3
 
 ## Project setup
 ```
