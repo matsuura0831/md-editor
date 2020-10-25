@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: ./docker/
+    volumes:
+      - ".:/workspace"
+    working_dir: "/workspace"
