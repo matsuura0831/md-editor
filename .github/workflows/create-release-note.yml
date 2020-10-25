@@ -1,3 +1,5 @@
+name: Create a release note
+
 on: 
   pull_request:
     types: [closed]
