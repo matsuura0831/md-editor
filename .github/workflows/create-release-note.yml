@@ -13,7 +13,7 @@ jobs:
           TZ: Asia/Tokyo
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
-          script: return |
+          script: |
             const pr = context.payload.pull_request
             if (!(pr.merged && pr.base.ref === process.env.PRODUCTION_BRANCH)) return;
 
