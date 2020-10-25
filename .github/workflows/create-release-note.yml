@@ -28,11 +28,11 @@ jobs:
 
             const merged_at = new Date(pr.merged_at);
             const tag_name = String(merged_at.getFullYear()).padStart(4, '0')
-              + '-' + + String(merged_at.getMonth() + 1).padStart(2, '0')
-              + '-' + String(merged_at.getDate()).padStart(2, '0')
-              + ' ' + String(merged_at.getHours()).padStart(2, '0')
-              + ':' + String(merged_at.getMinutes()).padStart(2, '0')
-              + ':' + String(merged_at.getSeconds()).padStart(2, '0');
+              + String(merged_at.getMonth() + 1).padStart(2, '0')
+              + String(merged_at.getDate()).padStart(2, '0')
+              + String(merged_at.getHours()).padStart(2, '0')
+              + String(merged_at.getMinutes()).padStart(2, '0')
+              + String(merged_at.getSeconds()).padStart(2, '0');
 
             const release = await github.repos.createRelease({
               ...context.repo,
